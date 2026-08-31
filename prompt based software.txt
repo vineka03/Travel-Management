@@ -1,0 +1,329 @@
+our lab has 18 system 3 of them are not working each working system is shared by 2 student how many student work at the time step by step
+our lab has 18 system 3 of them are not working each working system is shared by 2 student how many student work at the time 
+prompt
+
+you are a software analyst working with a college project team list the main features required for a simple travel management system.The user of the system are user 1 and user2 . keep it to 6 features one line each simple english no code give the answer as a numbered list.
+
+Answer in chatgpt
+
+1. **User Login:** Users can log in and manage their travel account.
+2. **Destination Search:** Users can search and view different travel destinations.
+3. **Trip Planning:** Users can create and manage their travel plans.
+4. **Hotel Booking:** Users can search and book hotels for their trip.
+5. **Travel Package:** Users can view and select suitable travel packages.
+6. **Booking Details:** Users can view, update, or cancel their bookings.
+
+Claude 
+
+Here are 6 main features for a simple travel management system:
+
+1. **User Registration and Login** – Allows User1 and User2 to create accounts and securely log in to the system.
+2. **Trip Booking** – Lets users search for and book travel options like flights, buses, or hotels.
+3. **Trip Details Management** – Enables users to view, edit, or cancel their booked trips.
+4. **Payment Processing** – Handles secure payment for bookings and shows payment history.
+5. **Notifications and Reminders** – Sends alerts for booking confirmations, trip schedules, and cancellations.
+6. **Travel History Tracking** – Keeps a record of past trips for each user to view anytime.
+
+Gemini
+
+1. **User Login and Profile Management**: Allows User 1 and User 2 to securely sign in, sign up, and manage their personal account details.
+2. **Destination and Package Search**: Enables users to search for popular travel destinations, holiday packages, and hotel options.
+3. **Booking and Reservation**: Lets users easily book travel tickets or accommodations and view their active reservations.
+4. **Itinerary Planner**: Helps users create, organize, and update a day-by-day schedule for their upcoming trips.
+5. **Expense Tracker**: Provides a simple tool to record, monitor, and calculate travel expenses and budgets.
+6. **Review and Feedback System**: Allows users to share ratings and reviews about their completed trips and services.
+
+Chatgpt
+
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Sample users
+users = {
+    "admin": "12345",
+    "student": "student123"
+}
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({
+            "message": "Username and password are required"
+        }), 400
+
+    if username in users and users[username] == password:
+        return jsonify({
+            "message": "Login successful",
+            "username": username
+        }), 200
+
+    return jsonify({
+        "message": "Invalid username or password"
+    }), 401
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
+
+
+Claude AI
+
+"""
+Simple User Login API
+----------------------
+Endpoints:
+  POST /register        -> create a new user
+  POST /login            -> authenticate and receive a JWT
+  GET  /profile          -> protected route, requires valid JWT
+  POST /logout           -> (stateless) client just discards the token
+
+Run:
+  pip install -r requirements.txt
+  python app.py
+"""
+
+import os
+import sqlite3
+import datetime
+from functools import wraps
+
+from flask import Flask, request, jsonify, g
+from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
+
+app = Flask(__name__)
+
+# --- Configuration -----------------------------------------------------
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "change-this-in-production")
+DATABASE = os.path.join(os.path.dirname(__file__), "users.db")
+TOKEN_EXPIRY_HOURS = 24
+
+
+# --- Database helpers ----------------------------------------------------
+def get_db():
+    db = getattr(g, "_database", None)
+    if db is None:
+        db = g._database = sqlite3.connect(DATABASE)
+        db.row_factory = sqlite3.Row
+    return db
+
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
+
+
+def init_db():
+    with app.app_context():
+        db = get_db()
+        db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE NOT NULL,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        db.commit()
+
+
+# --- JWT helpers -----------------------------------------------------------
+def generate_token(user_id, username):
+    payload = {
+        "user_id": user_id,
+        "username": username,
+        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=TOKEN_EXPIRY_HOURS),
+        "iat": datetime.datetime.utcnow(),
+    }
+    return jwt.encode(payload, app.config["SECRET_KEY"], algorithm="HS256")
+
+
+def token_required(f):
+    """Decorator that protects a route and injects the current user into g.current_user"""
+
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        auth_header = request.headers.get("Authorization", "")
+        if not auth_header.startswith("Bearer "):
+            return jsonify({"error": "Missing or malformed Authorization header"}), 401
+
+        token = auth_header.split(" ", 1)[1]
+        try:
+            payload = jwt.decode(token, app.config["SECRET_KEY"], algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token has expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Invalid token"}), 401
+
+        g.current_user = {"id": payload["user_id"], "username": payload["username"]}
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+# --- Routes ------------------------------------------------------------
+@app.route("/register", methods=["POST"])
+def register():
+    data = request.get_json(silent=True) or {}
+    username = (data.get("username") or "").strip()
+    email = (data.get("email") or "").strip().lower()
+    password = data.get("password") or ""
+
+    if not username or not email or not password:
+        return jsonify({"error": "username, email, and password are required"}), 400
+    if len(password) < 8:
+        return jsonify({"error": "password must be at least 8 characters"}), 400
+
+    password_hash = generate_password_hash(password)
+    db = get_db()
+    try:
+        db.execute(
+            "INSERT INTO users (username, email, password_hash, created_at) VALUES (?, ?, ?, ?)",
+            (username, email, password_hash, datetime.datetime.utcnow().isoformat()),
+        )
+        db.commit()
+    except sqlite3.IntegrityError:
+        return jsonify({"error": "username or email already exists"}), 409
+
+    return jsonify({"message": "user registered successfully"}), 201
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json(silent=True) or {}
+    username = (data.get("username") or "").strip()
+    password = data.get("password") or ""
+
+    if not username or not password:
+        return jsonify({"error": "username and password are required"}), 400
+
+    db = get_db()
+    user = db.execute(
+        "SELECT * FROM users WHERE username = ?", (username,)
+    ).fetchone()
+
+    if user is None or not check_password_hash(user["password_hash"], password):
+        return jsonify({"error": "invalid username or password"}), 401
+
+    token = generate_token(user["id"], user["username"])
+    return jsonify({"token": token, "expires_in_hours": TOKEN_EXPIRY_HOURS}), 200
+
+
+@app.route("/profile", methods=["GET"])
+@token_required
+def profile():
+    db = get_db()
+    user = db.execute(
+        "SELECT id, username, email, created_at FROM users WHERE id = ?",
+        (g.current_user["id"],),
+    ).fetchone()
+    if user is None:
+        return jsonify({"error": "user not found"}), 404
+
+    return jsonify(dict(user)), 200
+
+
+@app.route("/logout", methods=["POST"])
+@token_required
+def logout():
+    # JWTs are stateless, so "logout" just means the client deletes the token.
+    # For real invalidation, maintain a token blocklist (e.g. in Redis) keyed by jti.
+    return jsonify({"message": "logged out (discard the token client-side)"}), 200
+
+
+if __name__ == "__main__":
+    init_db()
+    app.run(debug=True, port=5000)
+
+
+Gemini 
+
+
+from fastapi import FastAPI, HTTPException, status
+from pydantic import BaseModel, EmailStr
+from passlib.context import CryptContext
+
+app = FastAPI(title="User Login API", version="1.0")
+
+# Setup password hashing context
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Mock database: In a real app, you would fetch this from PostgreSQL, MongoDB, etc.
+# Pre-hashed password for "SecurePassword123!"
+FAKE_USER_DB = {
+    "user@example.com": {
+        "email": "user@example.com",
+        "hashed_password": pwd_context.hash("SecurePassword123!"),
+        "full_name": "Jane Doe"
+    }
+}
+
+# Pydantic models for request and response validation
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserResponse(BaseModel):
+    email: str
+    full_name: str
+    message: str
+
+@app.post("/api/login", response_model=UserResponse, status_code=status.HTTP_200_OK)
+def login_user(user_credentials: UserLogin):
+    """
+    Authenticate a user using email and password.
+    """
+    # 1. Check if user exists in the database
+    user = FAKE_USER_DB.get(user_credentials.email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # 2. Verify the plain-text password against the stored hash
+    is_password_valid = pwd_context.verify(user_credentials.password, user["hashed_password"])
+    if not is_password_valid:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # 3. Return success response (In production, generate a JWT token here)
+    return {
+        "email": user["email"],
+        "full_name": user["full_name"],
+        "message": "Login successful!"
+    }
+
+
+Prompt :
+
+
+"Act as a Senior Python Backend Engineer specializing in FastAPI.
+
+Context: We are building an authentication microservice for an ed-tech platform using JWT and OAuth2 password bearer.
+Task: Write a complete '/api/v1/auth/login' POST endpoint function.
+Constraints: 
+ -Use Pydantic v2 for request validation (email and password).
+ - Verify passwords using bcrypt hashing.
+ - Return a 401 HTTPException with clear error details on failure.
+ - Do not include database connection setup; use mock dependencies.
+
+Output Format: Return only standard, PEP-8 compliant Python code with type annotations and inline
+docstrings."
+
+

@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Dream Cake Shop</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff5f8;
+            color: #333;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #d63384, #ff6fa5);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        header h1 {
+            font-size: 42px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: #861657;
+            padding: 16px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 8px 15px;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            color: #ffd6e7;
+        }
+
+        /* PAGE */
+        .page {
+            display: none;
+            min-height: 75vh;
+            padding: 50px 25px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* HOME */
+        .home {
+            background:
+                linear-gradient(rgba(255, 220, 235, 0.85),
+                rgba(255, 220, 235, 0.85)),
+                url("https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=1600&q=80");
+
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            padding-top: 150px;
+            min-height: 650px;
+        }
+
+        .home h2 {
+            color: #861657;
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .home p {
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: #d63384;
+            color: white;
+            border: none;
+            padding: 13px 28px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: #861657;
+        }
+
+        /* TITLES */
+        .title {
+            text-align: center;
+            color: #d63384;
+            font-size: 35px;
+            margin-bottom: 35px;
+        }
+
+        /* CAKE CARDS */
+        .cake-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .cake-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 5px 15px #ddd;
+            transition: 0.3s;
+        }
+
+        .cake-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .cake-card img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+        }
+
+        .cake-card h3 {
+            color: #d63384;
+            margin: 15px 0 8px;
+        }
+
+        .cake-card p {
+            margin: 8px;
+        }
+
+        .price {
+            color: #861657;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .cake-card .btn {
+            margin: 12px;
+        }
+
+        /* GALLERY */
+        .gallery {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #ccc;
+            transition: 0.3s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.04);
+        }
+
+        /* OFFERS */
+        .offers {
+            max-width: 1000px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .offer {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #ddd;
+        }
+
+        .offer h3 {
+            color: #d63384;
+            font-size: 25px;
+            margin-bottom: 15px;
+        }
+
+        .offer p {
+            line-height: 1.7;
+        }
+
+        /* ORDER FORM */
+        .form-box {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px #ddd;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        .form-box .btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* ABOUT */
+        .about-box {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px #ddd;
+            line-height: 1.8;
+        }
+
+        .about-box img {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* CONTACT */
+        .contact-box {
+            max-width: 800px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .contact-card {
+            background: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #ddd;
+        }
+
+        .contact-card h3 {
+            color: #d63384;
+            margin-bottom: 12px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #861657;
+            color: white;
+            text-align: center;
+            padding: 22px;
+        }
+
+        @media(max-width: 600px) {
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            nav button {
+                margin: 6px;
+                font-size: 14px;
+            }
+
+            .home h2 {
+                font-size: 35px;
+            }
+
+            .home {
+                padding-top: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+    <h1>🎂 Sweet Dream Cake Shop</h1>
+    <p>Fresh Cakes • Beautiful Designs • Sweet Memories</p>
+</header>
+
+
+<!-- NAVIGATION -->
+<nav>
+    <button onclick="showPage('home')">🏠 Home</button>
+    <button onclick="showPage('cakes')">🍰 Cakes</button>
+    <button onclick="showPage('gallery')">🖼️ Gallery</button>
+    <button onclick="showPage('offers')">🎁 Offers</button>
+    <button onclick="showPage('order')">🛒 Order</button>
+    <button onclick="showPage('about')">❤️ About</button>
+    <button onclick="showPage('contact')">📞 Contact</button>
+</nav>
+
+
+<!-- ================= HOME ================= -->
+
+<section id="home" class="page active home">
+
+    <h2>Welcome to Sweet Dream! 🎂</h2>
+
+    <p>
+        Delicious cakes made with love for every special occasion.
+    </p>
+
+    <button class="btn" onclick="showPage('cakes')">
+        Explore Cakes
+    </button>
+
+</section>
+
+
+<!-- ================= CAKES ================= -->
+
+<section id="cakes" class="page">
+
+    <h2 class="title">🍰 Our Delicious Cakes</h2>
+
+    <div class="cake-container">
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=700&q=80">
+            <h3>Chocolate Cake</h3>
+            <p>Rich chocolate cream cake</p>
+            <p class="price">₹600</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=700&q=80">
+            <h3>Birthday Cake</h3>
+            <p>Perfect for birthdays</p>
+            <p class="price">₹750</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=700&q=80">
+            <h3>Strawberry Cake</h3>
+            <p>Fresh strawberry cream</p>
+            <p class="price">₹700</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1614707267537-2b1c2b5c6e1c?auto=format&fit=crop&w=700&q=80">
+            <h3>Red Velvet</h3>
+            <p>Soft red velvet cake</p>
+            <p class="price">₹850</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=700&q=80">
+            <h3>Vanilla Cake</h3>
+            <p>Soft vanilla cream cake</p>
+            <p class="price">₹500</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=700&q=80">
+            <h3>Wedding Cake</h3>
+            <p>Beautiful wedding cake</p>
+            <p class="price">₹2500</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&w=700&q=80">
+            <h3>Black Forest</h3>
+            <p>Chocolate cherry cake</p>
+            <p class="price">₹650</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+        <div class="cake-card">
+            <img src="https://images.unsplash.com/photo-1575377427642-087cf684f29d?auto=format&fit=crop&w=700&q=80">
+            <h3>Custom Cake</h3>
+            <p>Your own special design</p>
+            <p class="price">₹1000</p>
+            <button class="btn" onclick="showPage('order')">Order Now</button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= GALLERY ================= -->
+
+<section id="gallery" class="page">
+
+    <h2 class="title">🖼️ Cake Gallery</h2>
+
+    <div class="gallery">
+
+        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1586985289688-ca3cf47d3e6e?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1614707267537-2b1c2b5c6e1c?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1571115177098-24ec42ed204d?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1575377427642-087cf684f29d?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1558301211-0d8c8ddee6ec?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&w=700&q=80">
+
+    </div>
+
+</section>
+
+
+<!-- ================= OFFERS ================= -->
+
+<section id="offers" class="page">
+
+    <h2 class="title">🎁 Special Offers</h2>
+
+    <div class="offers">
+
+        <div class="offer">
+            <h3>🎂 Birthday Offer</h3>
+            <p>
+                Get 15% OFF on birthday cakes.
+            </p>
+            <br>
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+        <div class="offer">
+            <h3>💍 Wedding Offer</h3>
+            <p>
+                Get special discounts on wedding cakes.
+            </p>
+            <br>
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+        <div class="offer">
+            <h3>🍫 Combo Offer</h3>
+            <p>
+                Cake + Cupcakes + Cookies starting from ₹999.
+            </p>
+            <br>
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ORDER ================= -->
+
+<section id="order" class="page">
+
+    <h2 class="title">🛒 Place Your Order</h2>
+
+    <div class="form-box">
+
+        <label>Customer Name</label>
+        <input type="text" placeholder="Enter your name">
+
+        <label>Phone Number</label>
+        <input type="tel" placeholder="Enter phone number">
+
+        <label>Email</label>
+        <input type="email" placeholder="Enter email">
+
+        <label>Select Cake</label>
+
+        <select>
+            <option>Chocolate Cake</option>
+            <option>Birthday Cake</option>
+            <option>Strawberry Cake</option>
+            <option>Red Velvet Cake</option>
+            <option>Vanilla Cake</option>
+            <option>Wedding Cake</option>
+            <option>Black Forest Cake</option>
+            <option>Custom Cake</option>
+        </select>
+
+        <label>Quantity</label>
+        <input type="number" min="1" value="1">
+
+        <label>Delivery Date</label>
+        <input type="date">
+
+        <label>Delivery Address</label>
+        <textarea rows="4"
+            placeholder="Enter your complete address"></textarea>
+
+        <label>Special Message on Cake</label>
+        <textarea rows="3"
+            placeholder="Example: Happy Birthday!"></textarea>
+
+        <button class="btn" onclick="placeOrder()">
+            Place Order 🎂
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ABOUT ================= -->
+
+<section id="about" class="page">
+
+    <h2 class="title">❤️ About Our Cake Shop</h2>
+
+    <div class="about-box">
+
+        <img src="https://images.unsplash.com/photo-1558636508-e0db3814bd1d?auto=format&fit=crop&w=1000&q=80">
+
+        <p>
+            Welcome to Sweet Dream Cake Shop!
+        </p>
+
+        <br>
+
+        <p>
+            We create fresh, delicious and beautiful cakes
+            for birthdays, weddings, anniversaries and all
+            your special celebrations.
+        </p>
+
+        <br>
+
+        <p>
+            Our cakes are made using quality ingredients and
+            are carefully prepared by our professional bakers.
+        </p>
+
+        <br>
+
+        <button class="btn" onclick="showPage('cakes')">
+            View Cakes
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CONTACT ================= -->
+
+<section id="contact" class="page">
+
+    <h2 class="title">📞 Contact Us</h2>
+
+    <div class="contact-box">
+
+        <div class="contact-card">
+            <h3>📍 Address</h3>
+            <p>Erode, Tamil Nadu</p>
+        </div>
+
+        <div class="contact-card">
+            <h3>📞 Phone</h3>
+            <p>+91 98765 43210</p>
+        </div>
+
+        <div class="contact-card">
+            <h3>📧 Email</h3>
+            <p>sweetdream@gmail.com</p>
+        </div>
+
+        <div class="contact-card">
+            <h3>🕐 Opening Hours</h3>
+            <p>9:00 AM - 9:00 PM</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+    <p>© 2026 Sweet Dream Cake Shop</p>
+    <p>Fresh Cakes • Happy Customers ❤️</p>
+</footer>
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+    function showPage(pageName) {
+
+        let pages = document.querySelectorAll(".page");
+
+        pages.forEach(function(page) {
+            page.classList.remove("active");
+        });
+
+        document.getElementById(pageName).classList.add("active");
+
+        window.scrollTo(0, 0);
+    }
+
+
+    function placeOrder() {
+
+        alert("🎂 Your order has been placed successfully!");
+
+        showPage("home");
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waffle World Management System</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fff8ed;
+            color: #333;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #b5651d, #f4a261);
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        header h1 {
+            font-size: 42px;
+        }
+
+        header p {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: #6f3d16;
+            text-align: center;
+            padding: 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 8px 15px;
+            cursor: pointer;
+        }
+
+        nav button:hover {
+            color: #ffd166;
+        }
+
+        /* PAGES */
+        .page {
+            display: none;
+            min-height: 75vh;
+            padding: 50px 25px;
+        }
+
+        .active {
+            display: block;
+        }
+
+        /* HOME */
+        .home {
+            min-height: 650px;
+            text-align: center;
+            padding-top: 150px;
+
+            background:
+                linear-gradient(
+                    rgba(255, 239, 213, 0.80),
+                    rgba(255, 239, 213, 0.80)
+                ),
+                url("https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=1600&q=80");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+        .home h2 {
+            color: #6f3d16;
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .home p {
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            background: #b5651d;
+            color: white;
+            border: none;
+            padding: 13px 28px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: #6f3d16;
+        }
+
+        /* TITLE */
+        .title {
+            text-align: center;
+            color: #b5651d;
+            font-size: 35px;
+            margin-bottom: 35px;
+        }
+
+        /* WAFFLE CARDS */
+        .waffle-container {
+            max-width: 1200px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(240px, 1fr));
+
+            gap: 25px;
+        }
+
+        .waffle-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 5px 15px #ddd;
+            transition: 0.3s;
+        }
+
+        .waffle-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .waffle-card img {
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+        }
+
+        .waffle-card h3 {
+            color: #b5651d;
+            margin: 15px 0 8px;
+        }
+
+        .waffle-card p {
+            margin: 8px;
+        }
+
+        .price {
+            color: #6f3d16;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .waffle-card .btn {
+            margin: 12px;
+        }
+
+        /* GALLERY */
+        .gallery {
+            max-width: 1200px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(250px, 1fr));
+
+            gap: 20px;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #ccc;
+            transition: 0.3s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.04);
+        }
+
+        /* OFFERS */
+        .offers {
+            max-width: 1000px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(250px, 1fr));
+
+            gap: 25px;
+        }
+
+        .offer {
+            background: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #ddd;
+        }
+
+        .offer h3 {
+            color: #b5651d;
+            font-size: 25px;
+            margin-bottom: 15px;
+        }
+
+        .offer p {
+            line-height: 1.7;
+        }
+
+        /* ORDER FORM */
+        .form-box {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px #ddd;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        .form-box .btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* ABOUT */
+        .about-box {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px #ddd;
+            line-height: 1.8;
+        }
+
+        .about-box img {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        /* CONTACT */
+        .contact-box {
+            max-width: 900px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 20px;
+        }
+
+        .contact-card {
+            background: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px #ddd;
+        }
+
+        .contact-card h3 {
+            color: #b5651d;
+            margin-bottom: 12px;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #6f3d16;
+            color: white;
+            text-align: center;
+            padding: 22px;
+        }
+
+        /* MOBILE */
+        @media(max-width: 600px) {
+
+            header h1 {
+                font-size: 30px;
+            }
+
+            nav button {
+                margin: 6px;
+                font-size: 14px;
+            }
+
+            .home h2 {
+                font-size: 35px;
+            }
+
+            .home {
+                padding-top: 100px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+
+<header>
+    <h1>🧇 Waffle World</h1>
+    <p>Fresh • Crispy • Delicious Waffles</p>
+</header>
+
+
+<!-- NAVIGATION -->
+
+<nav>
+    <button onclick="showPage('home')">🏠 Home</button>
+    <button onclick="showPage('waffles')">🧇 Waffles</button>
+    <button onclick="showPage('gallery')">🖼️ Gallery</button>
+    <button onclick="showPage('offers')">🎁 Offers</button>
+    <button onclick="showPage('order')">🛒 Order</button>
+    <button onclick="showPage('about')">❤️ About</button>
+    <button onclick="showPage('contact')">📞 Contact</button>
+</nav>
+
+
+<!-- ================= HOME ================= -->
+
+<section id="home" class="page active home">
+
+    <h2>Welcome to Waffle World! 🧇</h2>
+
+    <p>
+        Crispy outside, soft inside and loaded with delicious toppings.
+    </p>
+
+    <button class="btn" onclick="showPage('waffles')">
+        Explore Waffles
+    </button>
+
+</section>
+
+
+<!-- ================= WAFFLES ================= -->
+
+<section id="waffles" class="page">
+
+    <h2 class="title">🧇 Our Delicious Waffles</h2>
+
+    <div class="waffle-container">
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Classic Waffle</h3>
+            <p>Traditional crispy waffle</p>
+            <p class="price">₹120</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Chocolate Waffle</h3>
+            <p>Chocolate loaded waffle</p>
+            <p class="price">₹160</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1575853121743-60c24f0a7502?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Strawberry Waffle</h3>
+            <p>Fresh strawberry topping</p>
+            <p class="price">₹180</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1558584724-0e4d32ca55a4?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Ice Cream Waffle</h3>
+            <p>Waffle with ice cream</p>
+            <p class="price">₹200</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1506084868230-bb9d95c24759?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Fruit Waffle</h3>
+            <p>Fresh seasonal fruits</p>
+            <p class="price">₹190</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Nutella Waffle</h3>
+            <p>Rich Nutella topping</p>
+            <p class="price">₹220</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1576618148400-8d5c5c5d4c9e?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Caramel Waffle</h3>
+            <p>Sweet caramel topping</p>
+            <p class="price">₹170</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="waffle-card">
+            <img src="https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=700&q=80">
+
+            <h3>Belgian Waffle</h3>
+            <p>Authentic Belgian style</p>
+            <p class="price">₹230</p>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= GALLERY ================= -->
+
+<section id="gallery" class="page">
+
+    <h2 class="title">🖼️ Waffle Gallery</h2>
+
+    <div class="gallery">
+
+        <img src="https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1590080875515-8a3a8dc5735e?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1575853121743-60c24f0a7502?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1558584724-0e4d32ca55a4?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1506084868230-bb9d95c24759?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=700&q=80">
+
+        <img src="https://images.unsplash.com/photo-1576618148400-8d5c5c5d4c9e?auto=format&fit=crop&w=700&q=80">
+
+    </div>
+
+</section>
+
+
+<!-- ================= OFFERS ================= -->
+
+<section id="offers" class="page">
+
+    <h2 class="title">🎁 Special Offers</h2>
+
+    <div class="offers">
+
+        <div class="offer">
+            <h3>🧇 Waffle Combo</h3>
+
+            <p>
+                Any waffle + cold coffee
+                starting from ₹199.
+            </p>
+
+            <br>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="offer">
+            <h3>🍓 Weekend Offer</h3>
+
+            <p>
+                Get 15% OFF on selected
+                fruit waffles every weekend.
+            </p>
+
+            <br>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+
+        <div class="offer">
+            <h3>👨‍👩‍👧 Family Combo</h3>
+
+            <p>
+                4 waffles + 4 drinks
+                for only ₹699.
+            </p>
+
+            <br>
+
+            <button class="btn" onclick="showPage('order')">
+                Order Now
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ORDER ================= -->
+
+<section id="order" class="page">
+
+    <h2 class="title">🛒 Order Your Waffle</h2>
+
+    <div class="form-box">
+
+        <label>Customer Name</label>
+        <input type="text"
+               placeholder="Enter your name"
+               required>
+
+
+        <label>Phone Number</label>
+        <input type="tel"
+               placeholder="Enter phone number"
+               required>
+
+
+        <label>Email</label>
+        <input type="email"
+               placeholder="Enter email">
+
+
+        <label>Select Waffle</label>
+
+        <select>
+
+            <option>Classic Waffle</option>
+
+            <option>Chocolate Waffle</option>
+
+            <option>Strawberry Waffle</option>
+
+            <option>Ice Cream Waffle</option>
+
+            <option>Fruit Waffle</option>
+
+            <option>Nutella Waffle</option>
+
+            <option>Caramel Waffle</option>
+
+            <option>Belgian Waffle</option>
+
+        </select>
+
+
+        <label>Quantity</label>
+
+        <input type="number"
+               min="1"
+               value="1">
+
+
+        <label>Select Topping</label>
+
+        <select>
+
+            <option>Chocolate</option>
+
+            <option>Strawberry</option>
+
+            <option>Ice Cream</option>
+
+            <option>Fresh Fruits</option>
+
+            <option>Nutella</option>
+
+            <option>Caramel</option>
+
+        </select>
+
+
+        <label>Delivery Address</label>
+
+        <textarea rows="4"
+                  placeholder="Enter delivery address">
+        </textarea>
+
+
+        <label>Special Instructions</label>
+
+        <textarea rows="3"
+                  placeholder="Example: Less chocolate">
+        </textarea>
+
+
+        <button class="btn"
+                onclick="placeOrder()">
+
+            Place Order 🧇
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= ABOUT ================= -->
+
+<section id="about" class="page">
+
+    <h2 class="title">❤️ About Waffle World</h2>
+
+    <div class="about-box">
+
+        <img src="https://images.unsplash.com/photo-1562376552-0d160a2f238d?auto=format&fit=crop&w=1000&q=80">
+
+        <p>
+            Welcome to Waffle World!
+        </p>
+
+        <br>
+
+        <p>
+            We serve fresh, crispy and delicious waffles
+            prepared with quality ingredients.
+        </p>
+
+        <br>
+
+        <p>
+            From classic waffles to chocolate, fruit,
+            Nutella and ice cream waffles, we have
+            something for everyone.
+        </p>
+
+        <br>
+
+        <button class="btn"
+                onclick="showPage('waffles')">
+
+            View Waffles
+
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CONTACT ================= -->
+
+<section id="contact" class="page">
+
+    <h2 class="title">📞 Contact Us</h2>
+
+    <div class="contact-box">
+
+        <div class="contact-card">
+
+            <h3>📍 Location</h3>
+
+            <p>
+                Erode, Tamil Nadu
+            </p>
+
+        </div>
+
+
+        <div class="contact-card">
+
+            <h3>📞 Phone</h3>
+
+            <p>
+                +91 98765 43210
+            </p>
+
+        </div>
+
+
+        <div class="contact-card">
+
+            <h3>📧 Email</h3>
+
+            <p>
+                waffleworld@gmail.com
+            </p>
+
+        </div>
+
+
+        <div class="contact-card">
+
+            <h3>🕐 Opening Hours</h3>
+
+            <p>
+                10:00 AM - 10:00 PM
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <p>
+        © 2026 Waffle World Management System
+    </p>
+
+    <p>
+        Fresh Waffles • Happy Customers 🧇
+    </p>
+
+</footer>
+
+
+<!-- JAVASCRIPT -->
+
+<script>
+
+    function showPage(pageName) {
+
+        let pages = document.querySelectorAll(".page");
+
+        pages.forEach(function(page) {
+
+            page.classList.remove("active");
+
+        });
+
+        document
+            .getElementById(pageName)
+            .classList.add("active");
+
+        window.scrollTo(0, 0);
+    }
+
+
+    function placeOrder() {
+
+        alert(
+            "🧇 Your waffle order has been placed successfully!"
+        );
+
+        showPage("home");
+    }
+
+</script>
+
+</body>
+</html>
