@@ -1,0 +1,6 @@
+{
+  "name": "Travel Management System",
+  "description": "Travel Management System with trip booking, destination search, hotel reservations, package management, and companion web projects.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

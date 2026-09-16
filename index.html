@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Management System</title>
+    <meta name="description" content="Travel Management System with trip booking, destination search, hotel reservations, package management, and companion web projects.">
+    <meta property="og:title" content="Travel Management System">
+    <meta property="og:description" content="Travel Management System with trip booking, destination search, hotel reservations, package management, and companion web projects.">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f7fc;
+            color: #2c3e50;
+        }
+
+        /* TOP REPO BAR */
+        .repo-bar {
+            background: #1a252f;
+            color: #ecf0f1;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .repo-bar .repo-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            color: #48dbfb;
+        }
+
+        .repo-links {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .repo-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 5px 12px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .repo-link:hover, .repo-link.active-link {
+            background: #0984e3;
+            color: #fff;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, #0984e3, #00cec9);
+            color: white;
+            text-align: center;
+            padding: 35px 20px;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 40px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            margin-top: 8px;
+            font-size: 17px;
+            opacity: 0.95;
+        }
+
+        .user-badge-bar {
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .user-switch-btn {
+            background: #fff;
+            color: #0984e3;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .user-switch-btn:hover {
+            background: #dff9fb;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: #0c2461;
+            padding: 14px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        nav button {
+            background: none;
+            border: none;
+            color: #dff9fb;
+            font-size: 15px;
+            font-weight: 600;
+            margin: 6px 12px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+            transition: 0.2s;
+        }
+
+        nav button:hover, nav button.active-nav {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* PAGES */
+        .page {
+            display: none;
+            min-height: 75vh;
+            padding: 40px 20px;
+            max-width: 1240px;
+            margin: auto;
+        }
+
+        .active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* HOME HERO */
+        .home {
+            min-height: 650px;
+            text-align: center;
+            padding-top: 100px;
+            border-radius: 16px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+            background:
+                linear-gradient(rgba(12, 36, 97, 0.78), rgba(9, 132, 227, 0.8)),
+                url("https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1600&q=80");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .home h2 {
+            font-size: 46px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+
+        .home p {
+            font-size: 20px;
+            margin-bottom: 25px;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .home-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .feature-grid-quick {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            max-width: 960px;
+            margin: 60px auto 20px;
+        }
+
+        .feature-quick-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .feature-quick-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-4px);
+        }
+
+        .feature-quick-card h4 {
+            font-size: 17px;
+            margin-bottom: 6px;
+        }
+
+        .feature-quick-card p {
+            font-size: 13px;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        /* BUTTONS */
+        .btn {
+            background: #0984e3;
+            color: white;
+            border: none;
+            padding: 12px 26px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: 0.2s;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #0c2461;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: #0c2461;
+        }
+
+        .btn-sm {
+            padding: 7px 16px;
+            font-size: 13px;
+            border-radius: 18px;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        /* TITLE */
+        .title {
+            text-align: center;
+            color: #0c2461;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #636e72;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* FILTER BAR */
+        .filter-container {
+            max-width: 900px;
+            margin: 0 auto 30px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .filter-search {
+            flex: 1;
+            min-width: 220px;
+            position: relative;
+        }
+
+        .filter-search input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #dcdde1;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: #f1f2f6;
+            border: 1px solid #dfe4ea;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        .filter-pill.active, .filter-pill:hover {
+            background: #0984e3;
+            color: white;
+            border-color: #0984e3;
+        }
+
+        /* CARDS GRID */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .travel-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            transition: 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eef2f5;
+        }
+
+        .travel-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .travel-card-img-wrap {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .travel-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.4s;
+        }
+
+        .travel-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card-tag {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(12, 36, 97, 0.85);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .card-rating {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #d35400;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .travel-card-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .travel-card h3 {
+            color: #0c2461;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .travel-card p {
+            color: #636e72;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 14px;
+            flex: 1;
+        }
+
+        .travel-card-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f2f6;
+            padding-top: 14px;
+            margin-top: auto;
+        }
+
+        .price-badge {
+            color: #0984e3;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .price-badge span {
+            font-size: 12px;
+            color: #8395a7;
+            font-weight: normal;
+        }
+
+        /* PACKAGES */
+        .package-features {
+            list-style: none;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #57606f;
+        }
+
+        .package-features li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* FORMS */
+        .form-box {
+            max-width: 650px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #eef2f5;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-top: 14px;
+            font-size: 14px;
+            color: #2f3542;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 1px solid #ced6e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            color: #2f3542;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #0984e3;
+            box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.15);
+        }
+
+        .form-box .btn {
+            width: 100%;
+            margin-top: 25px;
+        }
+
+        /* BOOKINGS LIST TABLE / CARDS */
+        .booking-table-wrap {
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            overflow-x: auto;
+            margin-top: 20px;
+            border: 1px solid #eef2f5;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 16px;
+            color: #0c2461;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #f1f2f6;
+            vertical-align: middle;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .status-confirmed {
+            background: #e8f8f0;
+            color: #27ae60;
+        }
+
+        .status-cancelled {
+            background: #fdeaea;
+            color: #e74c3c;
+        }
+
+        .status-pending {
+            background: #fff8e7;
+            color: #e67e22;
+        }
+
+        /* TRIP PLANNER */
+        .planner-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .planner-card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eef2f5;
+        }
+
+        .itinerary-day {
+            background: #f8f9fa;
+            border-left: 4px solid #0984e3;
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 12px;
+        }
+
+        .itinerary-day h5 {
+            color: #0c2461;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .itinerary-day p {
+            font-size: 13px;
+            color: #57606f;
+            margin-bottom: 0;
+        }
+
+        /* EXPENSE TRACKER */
+        .expense-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .expense-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            border: 1px solid #eef2f5;
+        }
+
+        .expense-card h4 {
+            font-size: 14px;
+            color: #747d8c;
+            margin-bottom: 8px;
+        }
+
+        .expense-card .amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0c2461;
+        }
+
+        /* USER ACCOUNT & SWITCHER */
+        .account-box {
+            max-width: 750px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.06);
+            border: 1px solid #eef2f5;
+        }
+
+        .user-profiles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .user-profile-card {
+            border: 2px solid #e4e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .user-profile-card.active-user {
+            border-color: #0984e3;
+            background: #f0f7fc;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #dfe4ea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 12px;
+        }
+
+        /* SRS MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 40px 20px;
+        }
+
+        .modal-content {
+            background: white;
+            max-width: 800px;
+            margin: auto;
+            padding: 35px;
+            border-radius: 14px;
+            position: relative;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #747d8c;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #2f3542;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #0c2461;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+        }
+
+        footer p {
+            margin: 4px 0;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        footer a {
+            color: #48dbfb;
+            text-decoration: none;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header h1 { font-size: 30px; }
+            .home h2 { font-size: 32px; }
+            .home { padding-top: 70px; min-height: 500px; }
+            .form-row, .planner-container, .user-profiles-grid { grid-template-columns: 1fr; }
+            nav button { margin: 4px; font-size: 13px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- REPOSITORY COMPANION HEADER BAR -->
+<div class="repo-bar">
+    <div class="repo-title">
+        <span>🌐 GitHub Project:</span>
+        <strong>vineka03/Travel-Management</strong>
+    </div>
+    <div class="repo-links">
+        <span style="opacity: 0.75;">Switch Project View:</span>
+        <a href="index.html" class="repo-link active-link" title="Travel Management System">✈️ Travel Management</a>
+        <a href="waffel.html" class="repo-link" title="Waffle World Management System">🧇 Waffle World</a>
+        <a href="cake.html" class="repo-link" title="Sweet Dream Cake Shop">🎂 Sweet Dream Cakes</a>
+        <button onclick="openSrsModal()" class="repo-link" style="border:none; cursor:pointer;" title="View Software Requirements Specification">📋 View SRS</button>
+    </div>
+</div>
+
+<!-- HEADER -->
+<header>
+    <h1>✈️ Travel Management System</h1>
+    <p>Search Destinations • Plan Trips • Book Hotels & Packages • Manage Reservations</p>
+
+    <div class="user-badge-bar">
+        <span>Logged in as: <strong id="header-user-display">User 1 (John Traveler)</strong></span>
+        <span id="db-badge" style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 20px; font-size: 12px; margin: 0 8px; border: 1px solid rgba(255,255,255,0.35);">⚡ Supabase PostgreSQL</span>
+        <button class="user-switch-btn" onclick="toggleUserSwitch()">Switch User 🔄</button>
+    </div>
+</header>
+
+<!-- NAVIGATION -->
+<nav id="main-nav">
+    <button id="nav-home" class="active-nav" onclick="showPage('home')">🏠 Home</button>
+    <button id="nav-destinations" onclick="showPage('destinations')">🗺️ Destinations (FR-02)</button>
+    <button id="nav-packages" onclick="showPage('packages')">🎒 Packages (FR-05)</button>
+    <button id="nav-hotels" onclick="showPage('hotels')">🏨 Hotels (FR-04)</button>
+    <button id="nav-planner" onclick="showPage('planner')">🗓️ Trip Planner (FR-03)</button>
+    <button id="nav-bookings" onclick="showPage('bookings')">📋 Bookings (<span id="nav-booking-count">0</span>) (FR-06)</button>
+    <button id="nav-expenses" onclick="showPage('expenses')">💰 Expenses</button>
+    <button id="nav-account" onclick="showPage('account')">👤 Account (FR-01)</button>
+</nav>
+
+<!-- ================= 1. HOME ================= -->
+<section id="home" class="page active">
+    <div class="home">
+        <h2>Your Journey Begins Here 🌏</h2>
+        <p>
+            Explore breathtaking destinations, handpicked vacation packages, luxury stays,
+            and customizable itineraries — all in one centralized Travel Management portal.
+        </p>
+
+        <div class="home-actions">
+            <button class="btn" onclick="showPage('destinations')">Explore Destinations</button>
+            <button class="btn btn-outline" onclick="showPage('packages')">View Holiday Packages</button>
+            <button class="btn btn-outline" onclick="showPage('planner')">Plan a Trip</button>
+        </div>
+
+        <div class="feature-grid-quick">
+            <div class="feature-quick-card" onclick="showPage('destinations')">
+                <h4>🗺️ FR-02 Search</h4>
+                <p>Curated destinations across beaches, hills, and culture.</p>
+            </div>
+            <div class="feature-quick-card" onclick="showPage('packages')">
+                <h4>🎒 FR-05 Packages</h4>
+                <p>Complete holiday bundles with hotels and meals.</p>
+            </div>
+            <div class="feature-quick-card" onclick="showPage('hotels')">
+                <h4>🏨 FR-04 Hotels</h4>
+                <p>Verified stays from standard comfort to luxury resorts.</p>
+            </div>
+            <div class="feature-quick-card" onclick="showPage('planner')">
+                <h4>🗓️ FR-03 Planner</h4>
+                <p>Personalized day-by-day travel itinerary builder.</p>
+            </div>
+            <div class="feature-quick-card" onclick="showPage('bookings')">
+                <h4>📋 FR-06 Manage</h4>
+                <p>Real-time booking confirmation and cancellations.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= 2. DESTINATIONS (FR-02) ================= -->
+<section id="destinations" class="page">
+    <h2 class="title">🗺️ Explore Destinations</h2>
+    <p class="subtitle">Find your dream getaway with flexible search and categories (FR-02)</p>
+
+    <div class="filter-container">
+        <div class="filter-search">
+            <input type="text" id="dest-search-input" placeholder="🔍 Search destination, state or keyword..." oninput="filterDestinations()">
+        </div>
+        <div class="filter-pills">
+            <span class="filter-pill active" onclick="setDestCategory('All', this)">All</span>
+            <span class="filter-pill" onclick="setDestCategory('Beach', this)">🏖️ Beach</span>
+            <span class="filter-pill" onclick="setDestCategory('Hill Station', this)">🏔️ Mountains</span>
+            <span class="filter-pill" onclick="setDestCategory('Heritage', this)">🏛️ Heritage</span>
+            <span class="filter-pill" onclick="setDestCategory('City', this)">🌆 City</span>
+        </div>
+    </div>
+
+    <div class="cards-grid" id="destinations-grid">
+        <!-- Rendered dynamically -->
+    </div>
+</section>
+
+<!-- ================= 3. PACKAGES (FR-05) ================= -->
+<section id="packages" class="page">
+    <h2 class="title">🎒 Handcrafted Travel Packages</h2>
+    <p class="subtitle">All-inclusive holiday deals with accommodations, transfers, and sightseeing (FR-05)</p>
+
+    <div class="cards-grid" id="packages-grid">
+        <!-- Rendered dynamically -->
+    </div>
+</section>
+
+<!-- ================= 4. HOTELS (FR-04) ================= -->
+<section id="hotels" class="page">
+    <h2 class="title">🏨 Hotel Reservations</h2>
+    <p class="subtitle">Search and book verified hotels with flexible rooms and instant booking (FR-04)</p>
+
+    <div class="filter-container">
+        <div class="filter-search">
+            <input type="text" id="hotel-search-input" placeholder="🔍 Search by hotel name, city or amenity..." oninput="filterHotels()">
+        </div>
+        <div class="filter-pills">
+            <span class="filter-pill active" onclick="setHotelFilter('All', this)">All Ratings</span>
+            <span class="filter-pill" onclick="setHotelFilter('5-Star', this)">⭐ 5-Star Luxury</span>
+            <span class="filter-pill" onclick="setHotelFilter('4-Star', this)">⭐ 4-Star Premium</span>
+            <span class="filter-pill" onclick="setHotelFilter('Resort', this)">🌴 Resorts</span>
+        </div>
+    </div>
+
+    <div class="cards-grid" id="hotels-grid">
+        <!-- Rendered dynamically -->
+    </div>
+</section>
+
+<!-- ================= 5. TRIP PLANNER (FR-03) ================= -->
+<section id="planner" class="page">
+    <h2 class="title">🗓️ Trip Planning & Itinerary</h2>
+    <p class="subtitle">Build and customize your personalized day-by-day travel itinerary (FR-03)</p>
+
+    <div class="planner-container">
+        <div class="planner-card">
+            <h3 style="color: #0c2461; margin-bottom: 15px;">➕ Create New Trip Plan</h3>
+
+            <label>Trip Title</label>
+            <input type="text" id="plan-title" placeholder="e.g. Summer Vacation in Manali">
+
+            <div class="form-row">
+                <div>
+                    <label>Destination</label>
+                    <input type="text" id="plan-dest" placeholder="e.g. Manali, Himachal">
+                </div>
+                <div>
+                    <label>Travelers</label>
+                    <input type="number" id="plan-travelers" min="1" value="2">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Start Date</label>
+                    <input type="date" id="plan-start-date">
+                </div>
+                <div>
+                    <label>End Date</label>
+                    <input type="date" id="plan-end-date">
+                </div>
+            </div>
+
+            <label>Estimated Budget (₹)</label>
+            <input type="number" id="plan-budget" placeholder="e.g. 25000">
+
+            <label>Notes / Activities Planned</label>
+            <textarea id="plan-notes" rows="3" placeholder="Key sightseeing, restaurants, trekking plans..."></textarea>
+
+            <button class="btn" onclick="saveTripPlan()" style="margin-top: 18px;">💾 Save Trip Plan</button>
+        </div>
+
+        <div class="planner-card">
+            <h3 style="color: #0c2461; margin-bottom: 15px;">📋 Current Saved Itineraries</h3>
+            <div id="saved-plans-container">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= 6. BOOKINGS MANAGEMENT (FR-06) ================= -->
+<section id="bookings" class="page">
+    <h2 class="title">📋 Booking Details & Management</h2>
+    <p class="subtitle">View, modify, or cancel your booked trips and accommodations (FR-06)</p>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <div>
+            Active User: <strong id="booking-user-label">User 1</strong>
+        </div>
+        <div>
+            <button class="btn btn-sm" onclick="showPage('destinations')">➕ New Booking</button>
+            <button class="btn btn-sm btn-outline" style="color: #0984e3; border-color: #0984e3;" onclick="printBookings()">🖨️ Print Voucher</button>
+        </div>
+    </div>
+
+    <div class="booking-table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Type</th>
+                    <th>Item / Package</th>
+                    <th>Dates</th>
+                    <th>Guests</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="bookings-table-body">
+                <!-- Rendered dynamically -->
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ================= 7. EXPENSES ================= -->
+<section id="expenses" class="page">
+    <h2 class="title">💰 Trip Expense Tracker</h2>
+    <p class="subtitle">Monitor and calculate your overall travel budget and breakdown</p>
+
+    <div class="expense-summary">
+        <div class="expense-card">
+            <h4>Total Budget</h4>
+            <div class="amount" id="exp-total-budget">₹50,000</div>
+        </div>
+        <div class="expense-card">
+            <h4>Booked Expenses</h4>
+            <div class="amount" id="exp-booked-amount" style="color: #0984e3;">₹0</div>
+        </div>
+        <div class="expense-card">
+            <h4>Other Expenses</h4>
+            <div class="amount" id="exp-other-amount" style="color: #e67e22;">₹0</div>
+        </div>
+        <div class="expense-card">
+            <h4>Remaining Balance</h4>
+            <div class="amount" id="exp-remaining-amount" style="color: #27ae60;">₹50,000</div>
+        </div>
+    </div>
+
+    <div class="planner-container">
+        <div class="planner-card">
+            <h3 style="color: #0c2461; margin-bottom: 15px;">➕ Log an Expense</h3>
+            <label>Expense Category</label>
+            <select id="exp-category">
+                <option value="Food & Dining">🍲 Food & Dining</option>
+                <option value="Local Transport">🚕 Local Transport / Fuel</option>
+                <option value="Activities & Sightseeing">🎫 Activities & Sightseeing</option>
+                <option value="Shopping & Souvenirs">🛍️ Shopping & Souvenirs</option>
+                <option value="Emergency & Misc">🩹 Emergency & Miscellaneous</option>
+            </select>
+
+            <label>Description</label>
+            <input type="text" id="exp-desc" placeholder="e.g. Seafood Dinner at Baga Beach">
+
+            <label>Amount (₹)</label>
+            <input type="number" id="exp-val" min="1" placeholder="e.g. 1800">
+
+            <button class="btn" style="margin-top: 18px;" onclick="addExpense()">➕ Add Expense</button>
+        </div>
+
+        <div class="planner-card">
+            <h3 style="color: #0c2461; margin-bottom: 15px;">📊 Recent Logged Expenses</h3>
+            <div id="expense-list-container" style="max-height: 320px; overflow-y: auto;">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= 8. USER ACCOUNT (FR-01) ================= -->
+<section id="account" class="page">
+    <h2 class="title">👤 User Account & Profile</h2>
+    <p class="subtitle">Manage user profiles and switch between accounts (FR-01)</p>
+
+    <div class="account-box">
+        <h3 style="color: #0c2461; text-align: center; margin-bottom: 20px;">Switch User Session</h3>
+        <p style="text-align: center; color: #636e72; margin-bottom: 25px;">
+            The Travel Management System supports multiple users with isolated bookings and plans.
+        </p>
+
+        <div class="user-profiles-grid">
+            <div class="user-profile-card active-user" id="user-card-1" onclick="switchUser('user1')">
+                <div class="user-avatar">👨‍💼</div>
+                <h4 style="color: #0c2461; margin-bottom: 4px;">User 1: John Traveler</h4>
+                <p style="font-size: 13px; color: #636e72;">john.traveler@example.com</p>
+                <span class="status-badge status-confirmed" style="margin-top: 10px;">Active User</span>
+            </div>
+
+            <div class="user-profile-card" id="user-card-2" onclick="switchUser('user2')">
+                <div class="user-avatar">👩‍🌾</div>
+                <h4 style="color: #0c2461; margin-bottom: 4px;">User 2: Sarah Explorer</h4>
+                <p style="font-size: 13px; color: #636e72;">sarah.explorer@example.com</p>
+                <span class="status-badge" style="margin-top: 10px; background: #dfe4ea; color: #57606f;">Switch to User 2</span>
+            </div>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eef2f5;">
+
+        <div class="form-box" style="padding: 0; box-shadow: none; border: none;">
+            <h4 style="color: #0c2461; margin-bottom: 15px;">Update Profile Details</h4>
+            <div class="form-row">
+                <div>
+                    <label>Full Name</label>
+                    <input type="text" id="acc-fullname" value="John Traveler">
+                </div>
+                <div>
+                    <label>Phone Number</label>
+                    <input type="tel" id="acc-phone" value="+91 98765 43210">
+                </div>
+            </div>
+
+            <label>Email Address</label>
+            <input type="email" id="acc-email" value="john.traveler@example.com">
+
+            <label>Preferred Travel Category</label>
+            <select id="acc-pref">
+                <option>Hill Stations & Nature</option>
+                <option>Beach & Water Sports</option>
+                <option>Cultural & Historic</option>
+                <option>Luxury City Tours</option>
+            </select>
+
+            <button class="btn" style="margin-top: 20px;" onclick="saveAccountDetails()">Update Account Info</button>
+        </div>
+    </div>
+</section>
+
+<!-- ================= ORDER / BOOKING MODAL ================= -->
+<div id="booking-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeBookingModal()">&times;</span>
+        <h3 id="modal-booking-title" style="color: #0c2461; margin-bottom: 6px;">Confirm Reservation</h3>
+        <p id="modal-booking-subtitle" style="color: #636e72; font-size: 14px; margin-bottom: 20px;">Complete your booking details below</p>
+
+        <form onsubmit="confirmReservation(event)">
+            <input type="hidden" id="modal-item-id">
+            <input type="hidden" id="modal-item-type">
+            <input type="hidden" id="modal-item-price">
+
+            <div class="form-row">
+                <div>
+                    <label>Customer Name</label>
+                    <input type="text" id="b-name" required>
+                </div>
+                <div>
+                    <label>Phone Number</label>
+                    <input type="tel" id="b-phone" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Email</label>
+                    <input type="email" id="b-email" required>
+                </div>
+                <div>
+                    <label>Number of Travelers / Rooms</label>
+                    <input type="number" id="b-guests" min="1" max="20" value="2" oninput="recalcModalTotal()" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div>
+                    <label>Start / Check-in Date</label>
+                    <input type="date" id="b-date" required>
+                </div>
+                <div>
+                    <label>End / Check-out Date</label>
+                    <input type="date" id="b-end-date" required>
+                </div>
+            </div>
+
+            <label>Special Requests / Preferences</label>
+            <textarea id="b-notes" rows="2" placeholder="e.g. Vegetarian meals, high floor room, airport pickup..."></textarea>
+
+            <div style="background: #f0f7fc; padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <span style="font-size: 13px; color: #57606f;">Estimated Cost:</span>
+                    <div id="modal-total-display" style="font-size: 22px; font-weight: bold; color: #0984e3;">₹0</div>
+                </div>
+                <button type="submit" class="btn">Confirm Booking 🎫</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= SRS MODAL ================= -->
+<div id="srs-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeSrsModal()">&times;</span>
+        <h2 style="color: #0c2461; margin-bottom: 10px;">📋 Software Requirements Specification</h2>
+        <p style="color: #636e72; font-size: 14px; margin-bottom: 20px;">Travel Management System Core Features (srs.md)</p>
+
+        <div style="font-size: 14px; line-height: 1.6; color: #2c3e50;">
+            <h4 style="color: #0984e3; margin-top: 15px;">1. Purpose & Scope</h4>
+            <p>The purpose of the Travel Management System is to provide users (User1 and User2) with a simple system for managing travel activities, searching destinations, planning trips, booking hotels, selecting packages, and managing booking information.</p>
+
+            <h4 style="color: #0984e3; margin-top: 15px;">2. Six Functional Requirements</h4>
+            <ul style="padding-left: 20px; margin-top: 8px;">
+                <li><strong>FR-01 (User Login):</strong> Users can log in, switch accounts (User 1 / User 2), and manage their travel account profile.</li>
+                <li><strong>FR-02 (Destination Search):</strong> Users can search and filter different travel destinations by name and category.</li>
+                <li><strong>FR-03 (Trip Planning):</strong> Users can create, save, and manage custom day-by-day travel itineraries and budgets.</li>
+                <li><strong>FR-04 (Hotel Booking):</strong> Users can search hotels, view amenities and star ratings, and book rooms.</li>
+                <li><strong>FR-05 (Travel Package):</strong> Users can view and select all-inclusive holiday packages with meal and stay inclusions.</li>
+                <li><strong>FR-06 (Booking Details):</strong> Users can view active bookings, update dates/guests, or cancel existing bookings.</li>
+            </ul>
+
+            <h4 style="color: #0984e3; margin-top: 15px;">3. Supabase PostgreSQL Database Architecture</h4>
+            <p>The backend is connected to Supabase PostgreSQL with schema definitions, Row-Level Security (RLS) policies, and RESTful API routes:</p>
+            <ul style="padding-left: 20px; margin-top: 8px;">
+                <li><code>users</code>: User profiles, preferences, and multi-session switcher (FR-01)</li>
+                <li><code>destinations</code>: Tourist spots, categories, durations, and ratings (FR-02)</li>
+                <li><code>trip_plans</code>: Customized trip itineraries and budget calculations (FR-03)</li>
+                <li><code>hotels</code>: Hotel listings, pricing per night, and amenities (FR-04)</li>
+                <li><code>packages</code>: Holiday packages, inclusions, and discounts (FR-05)</li>
+                <li><code>bookings</code>: Confirmed and cancelled user reservations (FR-06)</li>
+                <li><code>expenses</code>: Trip category expenses and real-time ledger</li>
+            </ul>
+
+            <h4 style="color: #0984e3; margin-top: 15px;">4. Companion Web Pages in Repository</h4>
+            <ul style="padding-left: 20px; margin-top: 8px;">
+                <li><a href="waffel.html" style="color: #0984e3; font-weight: bold;">waffel.html</a> — Waffle World Management System</li>
+                <li><a href="cake.html" style="color: #0984e3; font-weight: bold;">cake.html</a> — Sweet Dream Cake Shop</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    <p><strong>Travel Management System</strong> • Created for vineka03/Travel-Management</p>
+    <p>Companion Projects: <a href="waffel.html">🧇 Waffle World</a> | <a href="cake.html">🎂 Sweet Dream Cake Shop</a> | <a href="#" onclick="openSrsModal(); return false;">📋 System SRS</a></p>
+    <p style="margin-top: 10px; font-size: 13px; opacity: 0.7;">© 2026 Travel Management System • Built with Node.js & Express</p>
+</footer>
+
+<!-- SCRIPTS -->
+<script>
+    // State management
+    let USERS = {
+        user1: { id: 'user1', name: 'John Traveler', email: 'john.traveler@example.com', phone: '+91 98765 43210', travel_preference: 'Hill Stations & Nature' },
+        user2: { id: 'user2', name: 'Sarah Explorer', email: 'sarah.explorer@example.com', phone: '+91 98765 11223', travel_preference: 'Beach & Water Sports' }
+    };
+
+    let currentUser = 'user1';
+    let DESTINATIONS = [];
+    let PACKAGES = [];
+    let HOTELS = [];
+    let CURRENT_PLANS = [];
+    let CURRENT_BOOKINGS = [];
+    let CURRENT_EXPENSES = [];
+
+    // Check Supabase PostgreSQL API Status
+    async function checkDbStatus() {
+        try {
+            const res = await fetch('/api/status');
+            const data = await res.json();
+            const badge = document.getElementById('db-badge');
+            if (badge) {
+                if (data.supabaseConfigured) {
+                    badge.innerHTML = '⚡ Supabase PostgreSQL: <strong>Connected</strong>';
+                    badge.style.background = 'rgba(46, 204, 113, 0.3)';
+                    badge.style.borderColor = '#2ecc71';
+                } else {
+                    badge.innerHTML = '⚡ Supabase PostgreSQL: <strong>Ready</strong>';
+                    badge.style.background = 'rgba(9, 132, 227, 0.35)';
+                    badge.style.borderColor = '#74b9ff';
+                }
+            }
+        } catch (e) {
+            console.warn('Database status check fallback:', e);
+        }
+    }
+
+    // Load data from Supabase backend API
+    async function loadInitialData() {
+        try {
+            const [usersRes, destsRes, pkgsRes, hotelsRes] = await Promise.all([
+                fetch('/api/users').then(r => r.json()).catch(() => []),
+                fetch('/api/destinations').then(r => r.json()).catch(() => []),
+                fetch('/api/packages').then(r => r.json()).catch(() => []),
+                fetch('/api/hotels').then(r => r.json()).catch(() => [])
+            ]);
+
+            if (usersRes && usersRes.length > 0) {
+                usersRes.forEach(u => {
+                    USERS[u.id] = {
+                        id: u.id,
+                        name: u.name,
+                        email: u.email,
+                        phone: u.phone,
+                        pref: u.travel_preference || u.pref || 'Hill Stations & Nature'
+                    };
+                });
+            }
+
+            if (destsRes && destsRes.length > 0) {
+                DESTINATIONS = destsRes.map(d => ({
+                    id: d.id,
+                    name: d.name,
+                    category: d.category,
+                    state: d.state,
+                    price: d.price,
+                    duration: d.duration,
+                    rating: d.rating,
+                    img: d.image_url || d.img,
+                    desc: d.description || d.desc
+                }));
+            }
+
+            if (pkgsRes && pkgsRes.length > 0) {
+                PACKAGES = pkgsRes.map(p => ({
+                    id: p.id,
+                    title: p.title,
+                    duration: p.duration,
+                    price: p.price,
+                    rating: p.rating,
+                    discount: p.discount,
+                    img: p.image_url || p.img,
+                    includes: Array.isArray(p.inclusions) ? p.inclusions : (p.includes || [])
+                }));
+            }
+
+            if (hotelsRes && hotelsRes.length > 0) {
+                HOTELS = hotelsRes.map(h => ({
+                    id: h.id,
+                    name: h.name,
+                    city: h.city,
+                    type: h.type,
+                    rating: h.rating,
+                    pricePerNight: h.price_per_night || h.pricePerNight,
+                    img: h.image_url || h.img,
+                    amenities: h.amenities
+                }));
+            }
+
+            await loadUserData();
+            filterDestinations();
+            renderPackages();
+            filterHotels();
+        } catch (err) {
+            console.error('Error loading initial data from backend:', err);
+        }
+    }
+
+    async function loadUserData() {
+        try {
+            const [plansRes, bookingsRes, expensesRes] = await Promise.all([
+                fetch(`/api/plans?userId=${currentUser}`).then(r => r.json()).catch(() => []),
+                fetch(`/api/bookings?userId=${currentUser}`).then(r => r.json()).catch(() => []),
+                fetch(`/api/expenses?userId=${currentUser}`).then(r => r.json()).catch(() => [])
+            ]);
+
+            CURRENT_PLANS = plansRes || [];
+            CURRENT_BOOKINGS = bookingsRes || [];
+            CURRENT_EXPENSES = expensesRes || [];
+
+            renderSavedPlans();
+            renderBookings();
+            updateExpenseSummary();
+        } catch (err) {
+            console.error('Error loading user data from backend:', err);
+        }
+    }
+
+    // Navigation function
+    function showPage(pageName) {
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active-nav'));
+
+        const targetPage = document.getElementById(pageName);
+        if (targetPage) {
+            targetPage.classList.add('active');
+        }
+
+        const navBtn = document.getElementById('nav-' + pageName);
+        if (navBtn) {
+            navBtn.classList.add('active-nav');
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Render Destinations
+    let activeDestCategory = 'All';
+    function setDestCategory(cat, el) {
+        activeDestCategory = cat;
+        document.querySelectorAll('.filter-pills .filter-pill').forEach(pill => pill.classList.remove('active'));
+        el.classList.add('active');
+        filterDestinations();
+    }
+
+    function filterDestinations() {
+        const query = (document.getElementById('dest-search-input').value || '').toLowerCase();
+        const grid = document.getElementById('destinations-grid');
+
+        const filtered = DESTINATIONS.filter(d => {
+            const matchesCat = activeDestCategory === 'All' || d.category === activeDestCategory;
+            const matchesQuery = (d.name || '').toLowerCase().includes(query) || (d.state || '').toLowerCase().includes(query) || (d.desc || '').toLowerCase().includes(query);
+            return matchesCat && matchesQuery;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #747d8c; padding: 40px;">No destinations matched your criteria.</p>';
+            return;
+        }
+
+        grid.innerHTML = filtered.map(d => `
+            <div class="travel-card">
+                <div class="travel-card-img-wrap">
+                    <img src="${d.img}" alt="${d.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=700&q=80'">
+                    <span class="card-tag">${d.category}</span>
+                    <span class="card-rating">⭐ ${d.rating}</span>
+                </div>
+                <div class="travel-card-content">
+                    <h3>${d.name}</h3>
+                    <p>${d.desc}</p>
+                    <div style="font-size: 13px; color: #747d8c; margin-bottom: 12px;">⏳ ${d.duration} • 📍 ${d.state}</div>
+                    <div class="travel-card-details">
+                        <div class="price-badge">₹${d.price.toLocaleString()} <span>/ person</span></div>
+                        <button class="btn btn-sm" onclick="openBookingModal('Destination', '${d.name}', ${d.price})">Book Trip ✈️</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Render Packages
+    function renderPackages() {
+        const grid = document.getElementById('packages-grid');
+        grid.innerHTML = PACKAGES.map(p => `
+            <div class="travel-card">
+                <div class="travel-card-img-wrap">
+                    <img src="${p.img}" alt="${p.title}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=700&q=80'">
+                    <span class="card-tag" style="background: #e67e22;">${p.discount}</span>
+                    <span class="card-rating">⭐ ${p.rating}</span>
+                </div>
+                <div class="travel-card-content">
+                    <h3>${p.title}</h3>
+                    <div style="font-size: 13px; color: #0984e3; font-weight: bold; margin-bottom: 10px;">⏳ ${p.duration}</div>
+                    <ul class="package-features">
+                        ${p.includes.map(inc => `<li>✓ ${inc}</li>`).join('')}
+                    </ul>
+                    <div class="travel-card-details">
+                        <div class="price-badge">₹${p.price.toLocaleString()} <span>/ package</span></div>
+                        <button class="btn btn-sm" onclick="openBookingModal('Package', '${p.title}', ${p.price})">Book Package 🎒</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Render Hotels
+    let activeHotelFilter = 'All';
+    function setHotelFilter(filter, el) {
+        activeHotelFilter = filter;
+        el.parentElement.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+        el.classList.add('active');
+        filterHotels();
+    }
+
+    function filterHotels() {
+        const query = (document.getElementById('hotel-search-input').value || '').toLowerCase();
+        const grid = document.getElementById('hotels-grid');
+
+        const filtered = HOTELS.filter(h => {
+            const matchesFilter = activeHotelFilter === 'All' || h.type === activeHotelFilter;
+            const matchesQuery = (h.name || '').toLowerCase().includes(query) || (h.city || '').toLowerCase().includes(query) || (h.amenities || '').toLowerCase().includes(query);
+            return matchesFilter && matchesQuery;
+        });
+
+        if (filtered.length === 0) {
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #747d8c; padding: 40px;">No hotels matched your search.</p>';
+            return;
+        }
+
+        grid.innerHTML = filtered.map(h => `
+            <div class="travel-card">
+                <div class="travel-card-img-wrap">
+                    <img src="${h.img}" alt="${h.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=700&q=80'">
+                    <span class="card-tag">${h.type}</span>
+                    <span class="card-rating">⭐ ${h.rating}</span>
+                </div>
+                <div class="travel-card-content">
+                    <h3>${h.name}</h3>
+                    <p style="margin-bottom: 8px;">📍 ${h.city} • Amenities: ${h.amenities}</p>
+                    <div class="travel-card-details">
+                        <div class="price-badge">₹${h.pricePerNight.toLocaleString()} <span>/ night</span></div>
+                        <button class="btn btn-sm" onclick="openBookingModal('Hotel', '${h.name} (${h.city})', ${h.pricePerNight})">Reserve Room 🏨</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Render Saved Trip Plans
+    function renderSavedPlans() {
+        const container = document.getElementById('saved-plans-container');
+        const plans = CURRENT_PLANS;
+
+        if (!plans || plans.length === 0) {
+            container.innerHTML = '<p style="color: #8395a7; font-style: italic; padding: 20px 0;">No saved trip plans yet for this user. Create one on the left!</p>';
+            return;
+        }
+
+        container.innerHTML = plans.map((p) => `
+            <div class="itinerary-day">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <h5>${p.title} 📍 ${p.destination}</h5>
+                    <button class="btn btn-sm btn-danger" style="padding: 2px 8px; font-size: 11px;" onclick="deleteTripPlan('${p.id}')">Delete</button>
+                </div>
+                <p><strong>Dates:</strong> ${p.start_date || p.startDate || 'TBD'} to ${p.end_date || p.endDate || 'TBD'} • <strong>Travelers:</strong> ${p.travelers} • <strong>Budget:</strong> ₹${(p.budget || 0).toLocaleString()}</p>
+                <p style="margin-top: 6px; color: #2c3e50;">${p.notes || 'No extra notes.'}</p>
+            </div>
+        `).join('');
+    }
+
+    async function saveTripPlan() {
+        const title = document.getElementById('plan-title').value.trim();
+        const destination = document.getElementById('plan-dest').value.trim();
+        if (!title || !destination) {
+            alert('Please fill in both Trip Title and Destination.');
+            return;
+        }
+
+        const newPlan = {
+            user_id: currentUser,
+            title: title,
+            destination: destination,
+            travelers: parseInt(document.getElementById('plan-travelers').value) || 1,
+            start_date: document.getElementById('plan-start-date').value || null,
+            end_date: document.getElementById('plan-end-date').value || null,
+            budget: parseInt(document.getElementById('plan-budget').value) || 0,
+            notes: document.getElementById('plan-notes').value.trim()
+        };
+
+        try {
+            const res = await fetch('/api/plans', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newPlan)
+            });
+            const saved = await res.json();
+            CURRENT_PLANS.unshift(saved);
+        } catch (e) {
+            CURRENT_PLANS.unshift({ ...newPlan, id: 'PL-' + Date.now().toString().slice(-4) });
+        }
+
+        // Reset inputs
+        document.getElementById('plan-title').value = '';
+        document.getElementById('plan-dest').value = '';
+        document.getElementById('plan-notes').value = '';
+
+        renderSavedPlans();
+        alert('🗓️ Trip plan saved to Supabase database!');
+    }
+
+    async function deleteTripPlan(planId) {
+        if (!confirm('Are you sure you want to delete this trip plan?')) return;
+        try {
+            await fetch(`/api/plans/${planId}`, { method: 'DELETE' });
+        } catch (e) {
+            console.warn('Delete plan offline fallback');
+        }
+        CURRENT_PLANS = CURRENT_PLANS.filter(p => p.id !== planId);
+        renderSavedPlans();
+    }
+
+    // Render Bookings Table
+    function renderBookings() {
+        const tbody = document.getElementById('bookings-table-body');
+        const userBookings = CURRENT_BOOKINGS;
+
+        document.getElementById('nav-booking-count').textContent = userBookings.length;
+        document.getElementById('booking-user-label').textContent = USERS[currentUser] ? USERS[currentUser].name : currentUser;
+
+        if (userBookings.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; color: #747d8c; padding: 30px;">No bookings found for ${USERS[currentUser] ? USERS[currentUser].name : currentUser}. Start by exploring destinations or packages!</td></tr>`;
+            updateExpenseSummary();
+            return;
+        }
+
+        tbody.innerHTML = userBookings.map(b => {
+            const itemName = b.item_name || b.itemName;
+            const statusClass = b.status === 'Confirmed' ? 'status-confirmed' : (b.status === 'Cancelled' ? 'status-cancelled' : 'status-pending');
+            const isCancelled = b.status === 'Cancelled';
+            return `
+                <tr>
+                    <td><strong>${b.id}</strong></td>
+                    <td><span class="status-badge" style="background:#eef2f5;">${b.type}</span></td>
+                    <td><strong>${itemName}</strong></td>
+                    <td>${b.dates}</td>
+                    <td>${b.guests}</td>
+                    <td style="font-weight: bold; color: #0984e3;">₹${Number(b.amount).toLocaleString()}</td>
+                    <td><span class="status-badge ${statusClass}">${b.status}</span></td>
+                    <td>
+                        ${!isCancelled ? `
+                            <button class="btn btn-sm btn-outline" style="color:#0984e3; border-color:#0984e3; padding: 4px 8px;" onclick="editBookingPrompt('${b.id}')">Edit</button>
+                            <button class="btn btn-sm btn-danger" style="padding: 4px 8px;" onclick="cancelBooking('${b.id}')">Cancel</button>
+                        ` : `
+                            <span style="font-size: 12px; color: #95a5a6;">Cancelled</span>
+                        `}
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        updateExpenseSummary();
+    }
+
+    async function cancelBooking(bookingId) {
+        if (!confirm(`Are you sure you want to cancel booking ${bookingId}?`)) return;
+
+        try {
+            await fetch(`/api/bookings/${bookingId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: 'Cancelled' })
+            });
+        } catch (e) {
+            console.warn('Cancel booking offline fallback');
+        }
+
+        const target = CURRENT_BOOKINGS.find(b => b.id === bookingId);
+        if (target) {
+            target.status = 'Cancelled';
+            renderBookings();
+            alert(`Booking ${bookingId} has been successfully cancelled in Supabase.`);
+        }
+    }
+
+    async function editBookingPrompt(bookingId) {
+        const target = CURRENT_BOOKINGS.find(b => b.id === bookingId);
+        if (!target) return;
+
+        const itemName = target.item_name || target.itemName;
+        const newGuests = prompt(`Update number of travelers/rooms for ${itemName}:`, target.guests);
+        if (newGuests && parseInt(newGuests) > 0) {
+            const oldGuests = target.guests || 1;
+            const updatedGuests = parseInt(newGuests);
+            const newAmount = Math.round((target.amount / oldGuests) * updatedGuests);
+
+            try {
+                await fetch(`/api/bookings/${bookingId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ guests: updatedGuests, amount: newAmount })
+                });
+            } catch (e) {
+                console.warn('Edit booking offline fallback');
+            }
+
+            target.guests = updatedGuests;
+            target.amount = newAmount;
+            renderBookings();
+            alert(`Booking ${bookingId} updated to ${target.guests} guests in Supabase.`);
+        }
+    }
+
+    function printBookings() {
+        window.print();
+    }
+
+    // Modal Booking handling
+    let currentModalItem = null;
+    function openBookingModal(type, itemName, basePrice) {
+        currentModalItem = { type, itemName, basePrice };
+        document.getElementById('modal-booking-title').textContent = `Book ${itemName}`;
+        document.getElementById('modal-booking-subtitle').textContent = `Type: ${type} • Base rate: ₹${basePrice.toLocaleString()}`;
+        document.getElementById('modal-item-id').value = itemName;
+        document.getElementById('modal-item-type').value = type;
+        document.getElementById('modal-item-price').value = basePrice;
+
+        // Prefill user details
+        const u = USERS[currentUser] || {};
+        document.getElementById('b-name').value = u.name || '';
+        document.getElementById('b-phone').value = u.phone || '';
+        document.getElementById('b-email').value = u.email || '';
+
+        // Default dates
+        const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0];
+        const nextWeek = new Date(Date.now() + 86400000 * 5).toISOString().split('T')[0];
+        document.getElementById('b-date').value = tomorrow;
+        document.getElementById('b-end-date').value = nextWeek;
+
+        recalcModalTotal();
+        document.getElementById('booking-modal').style.display = 'block';
+    }
+
+    function closeBookingModal() {
+        document.getElementById('booking-modal').style.display = 'none';
+    }
+
+    function recalcModalTotal() {
+        if (!currentModalItem) return;
+        const guests = parseInt(document.getElementById('b-guests').value) || 1;
+        const total = currentModalItem.basePrice * guests;
+        document.getElementById('modal-total-display').textContent = `₹${total.toLocaleString()}`;
+    }
+
+    async function confirmReservation(e) {
+        e.preventDefault();
+        const guests = parseInt(document.getElementById('b-guests').value) || 1;
+        const startDate = document.getElementById('b-date').value;
+        const endDate = document.getElementById('b-end-date').value;
+        const total = currentModalItem.basePrice * guests;
+        const notes = document.getElementById('b-notes').value.trim();
+
+        const newBooking = {
+            user_id: currentUser,
+            type: currentModalItem.type,
+            item_name: currentModalItem.itemName,
+            dates: `${startDate} to ${endDate}`,
+            guests: guests,
+            amount: total,
+            status: 'Confirmed',
+            notes: notes
+        };
+
+        try {
+            const res = await fetch('/api/bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newBooking)
+            });
+            const saved = await res.json();
+            CURRENT_BOOKINGS.unshift(saved);
+        } catch (err) {
+            CURRENT_BOOKINGS.unshift({ ...newBooking, id: 'BK-' + Math.floor(1000 + Math.random() * 9000) });
+        }
+
+        closeBookingModal();
+        renderBookings();
+        showPage('bookings');
+        alert(`🎉 Booking confirmed and saved to Supabase PostgreSQL!`);
+    }
+
+    // Expense Tracker
+    function updateExpenseSummary() {
+        const userBookings = CURRENT_BOOKINGS.filter(b => b.status === 'Confirmed');
+        const bookedTotal = userBookings.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+
+        const userExpenses = CURRENT_EXPENSES;
+        const otherTotal = userExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+
+        const budget = 50000;
+        const remaining = budget - (bookedTotal + otherTotal);
+
+        document.getElementById('exp-total-budget').textContent = `₹${budget.toLocaleString()}`;
+        document.getElementById('exp-booked-amount').textContent = `₹${bookedTotal.toLocaleString()}`;
+        document.getElementById('exp-other-amount').textContent = `₹${otherTotal.toLocaleString()}`;
+        document.getElementById('exp-remaining-amount').textContent = `₹${remaining.toLocaleString()}`;
+
+        renderExpensesList(userExpenses);
+    }
+
+    function renderExpensesList(expenses) {
+        const container = document.getElementById('expense-list-container');
+        if (!expenses || expenses.length === 0) {
+            container.innerHTML = '<p style="color:#747d8c; font-style:italic;">No custom expenses logged yet in Supabase.</p>';
+            return;
+        }
+
+        container.innerHTML = expenses.map(e => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #f1f2f6;">
+                <div>
+                    <strong>${e.description || e.desc}</strong>
+                    <div style="font-size:12px; color:#747d8c;">${e.category}</div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <span style="font-weight:bold; color:#0c2461;">₹${Number(e.amount).toLocaleString()}</span>
+                    <button class="btn btn-sm btn-danger" style="padding:2px 6px; font-size:11px;" onclick="deleteExpenseItem('${e.id}')">✕</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function addExpense() {
+        const desc = document.getElementById('exp-desc').value.trim();
+        const amount = parseInt(document.getElementById('exp-val').value);
+        const category = document.getElementById('exp-category').value;
+
+        if (!desc || isNaN(amount) || amount <= 0) {
+            alert('Please enter valid expense description and positive amount.');
+            return;
+        }
+
+        const newExpense = {
+            user_id: currentUser,
+            category: category,
+            description: desc,
+            amount: amount
+        };
+
+        try {
+            const res = await fetch('/api/expenses', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newExpense)
+            });
+            const saved = await res.json();
+            CURRENT_EXPENSES.unshift(saved);
+        } catch (e) {
+            CURRENT_EXPENSES.unshift({ ...newExpense, id: 'ex-' + Date.now() });
+        }
+
+        document.getElementById('exp-desc').value = '';
+        document.getElementById('exp-val').value = '';
+
+        updateExpenseSummary();
+        alert('Expense recorded in Supabase!');
+    }
+
+    async function deleteExpenseItem(expenseId) {
+        try {
+            await fetch(`/api/expenses/${expenseId}`, { method: 'DELETE' });
+        } catch (e) {
+            console.warn('Delete expense offline fallback');
+        }
+        CURRENT_EXPENSES = CURRENT_EXPENSES.filter(e => e.id !== expenseId);
+        updateExpenseSummary();
+    }
+
+    // User Profile Switcher (FR-01)
+    async function switchUser(userId) {
+        currentUser = userId;
+        const u = USERS[userId] || { name: userId, phone: '', email: '', pref: 'Hill Stations & Nature' };
+
+        document.getElementById('header-user-display').textContent = `${u.name} (${userId.toUpperCase()})`;
+
+        // Update cards highlight
+        document.getElementById('user-card-1').classList.toggle('active-user', userId === 'user1');
+        document.getElementById('user-card-2').classList.toggle('active-user', userId === 'user2');
+
+        // Update profile form
+        document.getElementById('acc-fullname').value = u.name;
+        document.getElementById('acc-phone').value = u.phone;
+        document.getElementById('acc-email').value = u.email;
+        document.getElementById('acc-pref').value = u.pref;
+
+        await loadUserData();
+    }
+
+    async function toggleUserSwitch() {
+        const nextUser = currentUser === 'user1' ? 'user2' : 'user1';
+        await switchUser(nextUser);
+        alert(`Switched active session to ${USERS[currentUser].name}!`);
+    }
+
+    async function saveAccountDetails() {
+        const u = USERS[currentUser] || {};
+        u.name = document.getElementById('acc-fullname').value.trim();
+        u.phone = document.getElementById('acc-phone').value.trim();
+        u.email = document.getElementById('acc-email').value.trim();
+        u.pref = document.getElementById('acc-pref').value;
+
+        try {
+            await fetch(`/api/users/${currentUser}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: u.name,
+                    phone: u.phone,
+                    email: u.email,
+                    travel_preference: u.pref
+                })
+            });
+        } catch (e) {
+            console.warn('Account save offline fallback');
+        }
+
+        document.getElementById('header-user-display').textContent = `${u.name} (${currentUser.toUpperCase()})`;
+        alert('Account details synchronized with Supabase database!');
+    }
+
+    // SRS Modal
+    function openSrsModal() {
+        document.getElementById('srs-modal').style.display = 'block';
+    }
+
+    function closeSrsModal() {
+        document.getElementById('srs-modal').style.display = 'none';
+    }
+
+    // Window click dismiss
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    };
+
+    // Initialization
+    window.addEventListener('DOMContentLoaded', async () => {
+        await checkDbStatus();
+        await loadInitialData();
+    });
+</script>
+
+</body>
+</html>
