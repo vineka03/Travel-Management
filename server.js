@@ -38,6 +38,21 @@ const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+// PWA Service Worker & Web App Manifest specific headers
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.sendFile(path.join(__dirname, 'sw.js'));
+});
+
+app.get('/manifest.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(__dirname, 'manifest.json'));
+});
+
 app.use(express.static(__dirname));
 
 // Status check endpoint indicating Supabase status

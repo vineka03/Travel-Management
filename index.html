@@ -4,9 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Management System</title>
-    <meta name="description" content="Travel Management System with trip booking, destination search, hotel reservations, package management, and companion web projects.">
+    <meta name="description" content="Progressive Web App (PWA) Travel Management System with offline capabilities, trip booking, destination search, hotel reservations, and companion web projects.">
     <meta property="og:title" content="Travel Management System">
-    <meta property="og:description" content="Travel Management System with trip booking, destination search, hotel reservations, package management, and companion web projects.">
+    <meta property="og:description" content="Progressive Web App (PWA) Travel Management System with offline capabilities, trip booking, destination search, hotel reservations, and companion web projects.">
+
+    <!-- PWA & Mobile Web App Capabilities -->
+    <meta name="theme-color" content="#0984e3">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="TravelApp">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <style>
         * {
@@ -1268,7 +1280,185 @@
                 width: 100%;
             }
         }
-    </style>
+
+        /* ==============================================================================
+           PROGRESSIVE WEB APP (PWA) STYLES & STANDALONE MODE
+           ============================================================================== */
+        
+        /* Standalone Display Mode adjustments */
+        @media all and (display-mode: standalone) {
+            body {
+                padding-top: env(safe-area-inset-top, 0px);
+                padding-bottom: env(safe-area-inset-bottom, 0px);
+            }
+            .pwa-install-trigger {
+                display: none !important;
+            }
+            .pwa-standalone-badge {
+                display: inline-flex !important;
+            }
+        }
+
+        /* In-App Install Button */
+        .pwa-badge-install-btn {
+            background: #2ed573;
+            color: #1a252f;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 3px 10px rgba(46, 213, 115, 0.35);
+            transition: all 0.2s ease;
+            touch-action: manipulation;
+            margin-left: 8px;
+        }
+        .pwa-badge-install-btn:hover {
+            background: #26af5f;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(46, 213, 115, 0.45);
+        }
+        .pwa-badge-install-btn:active {
+            transform: scale(0.96);
+        }
+
+        .pwa-top-install-link {
+            background: #2ed573 !important;
+            color: #1a252f !important;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+        .pwa-top-install-link:hover {
+            background: #26af5f !important;
+            color: white !important;
+        }
+
+        /* PWA Home Feature Card */
+        .pwa-install-banner-card {
+            background: linear-gradient(135deg, #0984e3 0%, #0c2461 100%);
+            color: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin: 24px 0 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 8px 24px rgba(9, 132, 227, 0.25);
+            flex-wrap: wrap;
+        }
+        .pwa-install-banner-text h3 {
+            font-size: 20px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .pwa-install-banner-text p {
+            font-size: 14px;
+            opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+        .pwa-install-banner-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Offline connectivity indicator toast */
+        .pwa-offline-toast {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 10000;
+            background: #2d3436;
+            color: #f5f6fa;
+            padding: 12px 18px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.15);
+            animation: pwa-slide-up 0.3s ease;
+        }
+        .pwa-offline-beacon {
+            width: 10px;
+            height: 10px;
+            background: #e74c3c;
+            border-radius: 50%;
+            animation: pwa-beacon-pulse 1.4s infinite;
+        }
+        @keyframes pwa-beacon-pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 10px #e74c3c; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+        @keyframes pwa-slide-up {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* iOS Installation Guide Modal */
+        .pwa-ios-modal-steps {
+            text-align: left;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 18px 20px;
+            border: 1px solid #e9ecef;
+        }
+        .pwa-ios-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 14px;
+            font-size: 14px;
+            color: #2d3436;
+        }
+        .pwa-ios-step:last-child {
+            margin-bottom: 0;
+        }
+        .pwa-ios-step-num {
+            background: #0984e3;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        @media (max-width: 600px) {
+            .pwa-badge-install-btn {
+                min-height: 44px;
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            .pwa-install-banner-card {
+                padding: 18px 16px;
+            }
+            .pwa-offline-toast {
+                left: 12px;
+                right: 12px;
+                bottom: 16px;
+                justify-content: center;
+            }
+        }
 </head>
 <body>
 
@@ -1284,6 +1474,7 @@
         <a href="waffel.html" class="repo-link" title="Waffle World Management System">🧇 Waffle World</a>
         <a href="cake.html" class="repo-link" title="Sweet Dream Cake Shop">🎂 Sweet Dream Cakes</a>
         <button onclick="openSrsModal()" class="repo-link" style="border:none; cursor:pointer;" title="View Software Requirements Specification">📋 View SRS</button>
+        <button id="pwa-top-install-btn" class="repo-link pwa-top-install-link pwa-install-trigger" onclick="triggerPWAInstall()" style="display: none;" title="Install Travel Management App">📲 Install PWA</button>
     </div>
 </div>
 
@@ -1296,6 +1487,13 @@
         <span>Logged in as: <strong id="header-user-display">User 1 (John Traveler)</strong></span>
         <span id="db-badge" style="background: rgba(255,255,255,0.22); padding: 4px 10px; border-radius: 20px; font-size: 12px; margin: 0 8px; border: 1px solid rgba(255,255,255,0.35);">⚡ Supabase PostgreSQL</span>
         <button class="user-switch-btn" onclick="toggleUserSwitch()">Switch User 🔄</button>
+        <button id="pwa-install-btn" class="pwa-badge-install-btn pwa-install-trigger" onclick="triggerPWAInstall()" style="display: none;" title="Install Travel Management App">
+            <span>📲 Install App</span>
+        </button>
+        <button id="pwa-ios-btn" class="pwa-badge-install-btn pwa-install-trigger" onclick="openIosInstallModal()" style="display: none;" title="Add to Home Screen">
+            <span>📲 Add to Home Screen</span>
+        </button>
+        <span class="pwa-standalone-badge" style="display: none; background: rgba(46, 213, 115, 0.25); color: #2ed573; border: 1px solid #2ed573; padding: 4px 10px; border-radius: 20px; font-size: 12px; margin-left: 8px; font-weight: bold;">📱 Standalone App</span>
     </div>
 </header>
 
@@ -1327,6 +1525,18 @@
             <button class="btn btn-outline" onclick="showPage('packages')">View Holiday Packages</button>
             <button class="btn btn-outline" onclick="showPage('planner')">Plan a Trip</button>
             <button class="btn btn-outline" style="border-color: #0984e3; color: #0984e3;" onclick="showPage('ai-assistant')">🤖 AI Data Assistant</button>
+        </div>
+
+        <!-- PWA Install Banner Card -->
+        <div id="pwa-home-banner" class="pwa-install-banner-card pwa-install-trigger" style="display: none;">
+            <div class="pwa-install-banner-text">
+                <h3>📲 Install Progressive Web App</h3>
+                <p>Install the Travel Management System on your desktop or mobile device for instant offline access, standalone windowing, and verified caching.</p>
+            </div>
+            <div class="pwa-install-banner-actions">
+                <button class="btn" style="background: #2ed573; color: #1a252f; font-weight: bold;" onclick="triggerPWAInstall()">⚡ Install Now</button>
+                <button class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: white;" onclick="dismissPwaBanner()">Dismiss</button>
+            </div>
         </div>
 
         <div class="feature-grid-quick">
@@ -1887,6 +2097,39 @@
             </ul>
         </div>
     </div>
+</div>
+
+<!-- ================= PWA iOS INSTALLATION MODAL ================= -->
+<div id="pwa-ios-modal" class="modal">
+    <div class="modal-content" style="max-width: 440px; text-align: center;">
+        <span class="modal-close" onclick="closeIosInstallModal()">&times;</span>
+        <div style="font-size: 44px; margin-bottom: 8px;">📲</div>
+        <h3 style="color: #0c2461; margin-bottom: 8px;">Install on iPhone & iPad</h3>
+        <p style="color: #57606f; font-size: 14px; line-height: 1.5;">
+            Install the <strong>Travel Management System</strong> to your home screen for quick launch and offline access:
+        </p>
+        <div class="pwa-ios-modal-steps">
+            <div class="pwa-ios-step">
+                <div class="pwa-ios-step-num">1</div>
+                <div>Tap the <strong>Share</strong> button in Safari's toolbar (<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="vertical-align: middle; display: inline;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg> square with arrow).</div>
+            </div>
+            <div class="pwa-ios-step">
+                <div class="pwa-ios-step-num">2</div>
+                <div>Scroll down the menu and tap <strong>"Add to Home Screen"</strong> (➕).</div>
+            </div>
+            <div class="pwa-ios-step">
+                <div class="pwa-ios-step-num">3</div>
+                <div>Tap <strong>Add</strong> in the top-right corner to finish.</div>
+            </div>
+        </div>
+        <button class="btn" onclick="closeIosInstallModal()" style="width: 100%;">Understood</button>
+    </div>
+</div>
+
+<!-- ================= PWA OFFLINE CONNECTIVITY TOAST ================= -->
+<div id="pwa-offline-toast" class="pwa-offline-toast" style="display: none;">
+    <span class="pwa-offline-beacon"></span>
+    <span id="pwa-offline-msg">Offline Mode — Cached data is active</span>
 </div>
 
 <!-- FOOTER -->
@@ -2876,8 +3119,164 @@
         }
     }
 
+    // ==============================================================================
+    // PROGRESSIVE WEB APP (PWA) CONTROLLER & SERVICE WORKER
+    // ==============================================================================
+    let deferredInstallPrompt = null;
+    let isPwaInstalled = false;
+
+    // 1. Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                .then((registration) => {
+                    console.log('[PWA] Service Worker registered with scope:', registration.scope);
+                })
+                .catch((error) => {
+                    console.warn('[PWA] Service Worker registration failed:', error);
+                });
+        });
+    }
+
+    // 2. Standalone Display Mode Detection
+    function checkStandaloneMode() {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+                             window.navigator.standalone === true ||
+                             document.referrer.includes('android-app://');
+
+        if (isStandalone) {
+            isPwaInstalled = true;
+            document.body.classList.add('is-pwa-standalone');
+            // Hide install triggers
+            document.querySelectorAll('.pwa-install-trigger').forEach(el => {
+                el.style.setProperty('display', 'none', 'important');
+            });
+            // Show standalone indicator badge
+            const badge = document.querySelector('.pwa-standalone-badge');
+            if (badge) badge.style.display = 'inline-flex';
+        }
+        return isStandalone;
+    }
+
+    // 3. BeforeInstallPrompt Event (Desktop Chrome/Edge & Android Chrome)
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Prevent default mini-infobar from appearing on mobile
+        e.preventDefault();
+        deferredInstallPrompt = e;
+
+        // Check if already running in standalone
+        if (checkStandaloneMode()) return;
+
+        // Reveal in-app install triggers
+        const badgeBtn = document.getElementById('pwa-install-btn');
+        const topBtn = document.getElementById('pwa-top-install-btn');
+        const homeBanner = document.getElementById('pwa-home-banner');
+
+        if (badgeBtn) badgeBtn.style.display = 'inline-flex';
+        if (topBtn) topBtn.style.display = 'inline-flex';
+        if (homeBanner && !sessionStorage.getItem('pwa_banner_dismissed')) {
+            homeBanner.style.display = 'flex';
+        }
+    });
+
+    // 4. Trigger Installation Prompt
+    async function triggerPWAInstall() {
+        if (!deferredInstallPrompt) {
+            if (isIOSDevice()) {
+                openIosInstallModal();
+                return;
+            }
+            alert('To install, tap your browser menu (⋮) and choose "Install Travel Management System" or "Add to Home screen".');
+            return;
+        }
+
+        try {
+            await deferredInstallPrompt.prompt();
+            const choice = await deferredInstallPrompt.userChoice;
+            if (choice.outcome === 'accepted') {
+                console.log('[PWA] User accepted installation prompt');
+                hideAllInstallTriggers();
+            } else {
+                console.log('[PWA] User dismissed installation prompt');
+            }
+            deferredInstallPrompt = null;
+        } catch (err) {
+            console.warn('[PWA] Installation prompt error:', err);
+        }
+    }
+
+    function hideAllInstallTriggers() {
+        document.querySelectorAll('.pwa-install-trigger').forEach(el => {
+            el.style.setProperty('display', 'none', 'important');
+        });
+    }
+
+    function dismissPwaBanner() {
+        const homeBanner = document.getElementById('pwa-home-banner');
+        if (homeBanner) homeBanner.style.display = 'none';
+        sessionStorage.setItem('pwa_banner_dismissed', 'true');
+    }
+
+    // 5. Detect App Installed Event
+    window.addEventListener('appinstalled', () => {
+        console.log('[PWA] Application successfully installed');
+        isPwaInstalled = true;
+        hideAllInstallTriggers();
+        const badge = document.querySelector('.pwa-standalone-badge');
+        if (badge) badge.style.display = 'inline-flex';
+    });
+
+    // 6. iOS Device Detection & Guide Modal
+    function isIOSDevice() {
+        return /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase()) && !window.MSStream;
+    }
+
+    function checkIosPrompt() {
+        if (isIOSDevice() && !checkStandaloneMode()) {
+            const iosBtn = document.getElementById('pwa-ios-btn');
+            if (iosBtn) iosBtn.style.display = 'inline-flex';
+        }
+    }
+
+    function openIosInstallModal() {
+        const modal = document.getElementById('pwa-ios-modal');
+        if (modal) modal.classList.add('active');
+    }
+
+    function closeIosInstallModal() {
+        const modal = document.getElementById('pwa-ios-modal');
+        if (modal) modal.classList.remove('active');
+    }
+
+    // 7. Online / Offline Status Monitoring & Toast
+    function updateOnlineStatus() {
+        const toast = document.getElementById('pwa-offline-toast');
+        const msg = document.getElementById('pwa-offline-msg');
+        if (!toast) return;
+
+        if (navigator.onLine) {
+            if (toast.style.display === 'flex') {
+                toast.innerHTML = '<span style="color:#2ed573; font-size:16px;">✓</span> <span>Back Online — Connectivity Restored</span>';
+                setTimeout(() => {
+                    toast.style.display = 'none';
+                    toast.innerHTML = '<span class="pwa-offline-beacon"></span> <span id="pwa-offline-msg">Offline Mode — Cached data is active</span>';
+                }, 3000);
+            } else {
+                toast.style.display = 'none';
+            }
+        } else {
+            toast.style.display = 'flex';
+        }
+    }
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
     // Initialization
     window.addEventListener('DOMContentLoaded', async () => {
+        checkStandaloneMode();
+        checkIosPrompt();
+        updateOnlineStatus();
         await checkDbStatus();
         await loadInitialData();
         await loadAiManagementSummary();

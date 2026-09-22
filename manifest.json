@@ -1,0 +1,74 @@
+{
+  "id": "/",
+  "name": "Travel Management System",
+  "short_name": "TravelApp",
+  "description": "Search destinations, plan customizable itineraries, book verified hotels and vacation packages, and manage reservations.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#0984e3",
+  "background_color": "#f0f7fc",
+  "categories": [
+    "travel",
+    "lifestyle",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore Destinations",
+      "short_name": "Destinations",
+      "description": "Browse curated holiday and tourist spots",
+      "url": "/#destinations",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Trip Planner",
+      "short_name": "Planner",
+      "description": "Plan day-by-day travel itinerary",
+      "url": "/#planner",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Bookings",
+      "short_name": "Bookings",
+      "description": "Manage active travel reservations",
+      "url": "/#bookings",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "AI Data Assistant",
+      "short_name": "AI Assistant",
+      "description": "Intelligent travel insights and audit",
+      "url": "/#ai-assistant",
+      "icons": [{ "src": "/pwa-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

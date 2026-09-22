@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline • Travel Management System</title>
+    <meta name="theme-color" content="#0984e3">
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f7fc;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .offline-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+            border: 1px solid #dcdde1;
+            padding: 40px 30px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+        .offline-icon {
+            width: 80px;
+            height: 80px;
+            background: #ffeaa7;
+            color: #d63031;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            margin: 0 auto 20px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #0c2461;
+            margin-bottom: 12px;
+        }
+        p {
+            color: #57606f;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #f1f2f6;
+            color: #2f3542;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #e74c3c;
+            border-radius: 50%;
+        }
+        .btn {
+            display: inline-block;
+            background: #0984e3;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            background: #0770c4;
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #0984e3;
+            border: 1px solid #0984e3;
+        }
+        .btn-outline:hover {
+            background: #e3f2fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <div class="offline-icon">📡</div>
+        <div class="status-pill">
+            <span class="status-dot"></span>
+            <span>You're Currently Offline</span>
+        </div>
+        <h1>No Internet Connection</h1>
+        <p>
+            The Travel Management System operates with offline support. Your previously loaded travel plans, destinations, and cached data remain accessible.
+        </p>
+        <button class="btn" onclick="window.location.reload()">🔄 Retry Connection</button>
+        <a href="/" class="btn btn-outline">🏠 Return to Cached Home</a>
+    </div>
+</body>
+</html>

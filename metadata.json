@@ -1,6 +1,6 @@
 {
   "name": "Travel Management System",
-  "description": "Travel Management System with trip booking, destination search, hotel reservations, package management, and companion web projects.",
+  "description": "Progressive Web App (PWA) Travel Management System with offline capabilities, trip booking, destination search, hotel reservations, and companion web projects.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

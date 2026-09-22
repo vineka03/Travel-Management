@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0984e3"/>
+      <stop offset="60%" stop-color="#00a8ff"/>
+      <stop offset="100%" stop-color="#0c2461"/>
+    </linearGradient>
+    <linearGradient id="planeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e6f2ff"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Background Rounded Canvas -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+
+  <!-- Subtle Globe Meridians and Latitude Rings -->
+  <g stroke="rgba(255,255,255,0.22)" stroke-width="6" fill="none">
+    <circle cx="256" cy="256" r="170"/>
+    <ellipse cx="256" cy="256" rx="80" ry="170"/>
+    <path d="M 96,210 Q 256,230 416,210"/>
+    <path d="M 96,302 Q 256,322 416,302"/>
+  </g>
+
+  <!-- Jet Flight Contrail Arc -->
+  <path d="M 130,370 C 180,380 230,350 290,290" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="8" stroke-dasharray="12 10" stroke-linecap="round"/>
+
+  <!-- Modern Airplane Soaring Icon -->
+  <g transform="translate(256, 240) rotate(38)" filter="url(#dropShadow)">
+    <!-- Main Fuselage -->
+    <path d="M 0,-100 C 14,-70 14,40 10,75 C 6,95 2,105 0,105 C -2,105 -6,95 -10,75 C -14,40 -14,-70 0,-100 Z" fill="url(#planeGrad)"/>
+    
+    <!-- Wings -->
+    <path d="M 0,-15 L 110,40 L 105,52 L 0,22 L -105,52 L -110,40 Z" fill="url(#planeGrad)"/>
+    
+    <!-- Tail Fin -->
+    <path d="M 0,65 L 42,90 L 38,98 L 0,85 L -38,98 L -42,90 Z" fill="url(#planeGrad)"/>
+
+    <!-- Cockpit Glass Accent -->
+    <ellipse cx="0" cy="-60" rx="5" ry="10" fill="#0984e3" opacity="0.8"/>
+  </g>
+
+  <!-- Compass / Star Sparkle Accent -->
+  <path d="M 370,120 Q 370,140 390,140 Q 370,140 370,160 Q 370,140 350,140 Q 370,140 370,120 Z" fill="#ffffff" opacity="0.9"/>
+  <circle cx="150" cy="160" r="6" fill="#ffffff" opacity="0.6"/>
+</svg>

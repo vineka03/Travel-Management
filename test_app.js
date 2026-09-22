@@ -25,9 +25,9 @@ function makeRequest(options, postData = null) {
       res.on('end', () => {
         try {
           const parsed = JSON.parse(data);
-          resolve({ status: res.statusCode, data: parsed });
+          resolve({ status: res.statusCode, headers: res.headers, data: parsed });
         } catch (e) {
-          resolve({ status: res.statusCode, raw: data });
+          resolve({ status: res.statusCode, headers: res.headers, raw: data });
         }
       });
     });
@@ -299,6 +299,62 @@ async function runTests() {
     assert(aiAnalyze.data && aiAnalyze.data.success === true, 'AI analysis returns success true');
     assert(typeof aiAnalyze.data.analysis === 'string' && aiAnalyze.data.analysis.length > 50, 'AI analysis returns rich structured text');
     assert(aiAnalyze.data.mode !== undefined, `AI analysis executed with mode: ${aiAnalyze.data?.mode}`);
+
+    // 12. Testing Progressive Web App (PWA) Standards & Assets
+    console.log('\n12. Testing Progressive Web App (PWA) Compliance');
+    const manifestRes = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/manifest.json',
+      method: 'GET'
+    });
+    assert(manifestRes.status === 200, 'GET /manifest.json returns 200 OK');
+    assert(manifestRes.headers['content-type'] && manifestRes.headers['content-type'].includes('application/manifest+json'), 'Manifest served with application/manifest+json content-type');
+    assert(manifestRes.data && manifestRes.data.display === 'standalone', 'Manifest specifies display: standalone');
+    assert(manifestRes.data && manifestRes.data.start_url === '/', 'Manifest specifies start_url: /');
+    assert(Array.isArray(manifestRes.data?.icons) && manifestRes.data.icons.length >= 3, 'Manifest includes complete set of responsive icons');
+
+    const swRes = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/sw.js',
+      method: 'GET'
+    });
+    assert(swRes.status === 200, 'GET /sw.js returns 200 OK');
+    assert(swRes.headers['content-type'] && swRes.headers['content-type'].includes('javascript'), 'Service worker served with javascript content-type');
+    assert(swRes.headers['service-worker-allowed'] === '/', 'Service worker specifies Service-Worker-Allowed: /');
+
+    const offlineRes = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/offline.html',
+      method: 'GET'
+    });
+    assert(offlineRes.status === 200, 'GET /offline.html returns 200 OK');
+
+    const icon192 = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/pwa-192x192.png',
+      method: 'GET'
+    });
+    assert(icon192.status === 200, 'GET /pwa-192x192.png returns 200 OK');
+
+    const icon512 = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/pwa-512x512.png',
+      method: 'GET'
+    });
+    assert(icon512.status === 200, 'GET /pwa-512x512.png returns 200 OK');
+
+    const iconSvg = await makeRequest({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/icon.svg',
+      method: 'GET'
+    });
+    assert(iconSvg.status === 200, 'GET /icon.svg returns 200 OK');
 
   } catch (err) {
     console.error('Test execution error:', err);
