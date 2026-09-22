@@ -747,6 +747,119 @@
             text-decoration: none;
         }
 
+        /* AI ASSISTANT STYLES */
+        .ai-kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+        .ai-kpi-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-top: 4px solid #0984e3;
+            transition: transform 0.2s ease;
+        }
+        .ai-kpi-card:hover {
+            transform: translateY(-2px);
+        }
+        .ai-kpi-title {
+            font-size: 13px;
+            color: #636e72;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .ai-kpi-value {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0c2461;
+            margin-bottom: 4px;
+        }
+        .ai-kpi-sub {
+            font-size: 12px;
+            color: #2ed573;
+            font-weight: 600;
+        }
+        .ai-presets-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .ai-preset-chip {
+            background: #f1f2f6;
+            border: 1px solid #dfe4ea;
+            color: #2f3542;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .ai-preset-chip:hover {
+            background: #0984e3;
+            color: white;
+            border-color: #0984e3;
+            transform: translateY(-1px);
+        }
+        .ai-result-box {
+            background: white;
+            border-radius: 14px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e1e8ed;
+            line-height: 1.7;
+            color: #2f3542;
+        }
+        .ai-result-box h3 {
+            color: #0c2461;
+            margin-top: 18px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 2px solid #f1f2f6;
+            padding-bottom: 6px;
+        }
+        .ai-result-box h4 {
+            color: #1e3799;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+        .ai-result-box ul {
+            margin-left: 20px;
+            margin-bottom: 14px;
+        }
+        .ai-result-box li {
+            margin-bottom: 6px;
+        }
+        .ai-loading-box {
+            background: white;
+            padding: 45px 20px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px dashed #74b9ff;
+            box-shadow: 0 4px 15px rgba(9, 132, 227, 0.08);
+        }
+        .ai-spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #f1f2f6;
+            border-top: 4px solid #0984e3;
+            border-radius: 50%;
+            animation: ai-spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes ai-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             header h1 { font-size: 30px; }
@@ -795,6 +908,8 @@
     <button id="nav-planner" onclick="showPage('planner')">🗓️ Trip Planner (FR-03)</button>
     <button id="nav-bookings" onclick="showPage('bookings')">📋 Bookings (<span id="nav-booking-count">0</span>) (FR-06)</button>
     <button id="nav-expenses" onclick="showPage('expenses')">💰 Expenses</button>
+    <button id="nav-reviews" onclick="showPage('reviews')">⭐ Reviews (FR-06)</button>
+    <button id="nav-ai-assistant" onclick="showPage('ai-assistant')">🤖 AI Data Assistant</button>
     <button id="nav-account" onclick="showPage('account')">👤 Account (FR-01)</button>
 </nav>
 
@@ -811,6 +926,7 @@
             <button class="btn" onclick="showPage('destinations')">Explore Destinations</button>
             <button class="btn btn-outline" onclick="showPage('packages')">View Holiday Packages</button>
             <button class="btn btn-outline" onclick="showPage('planner')">Plan a Trip</button>
+            <button class="btn btn-outline" style="border-color: #0984e3; color: #0984e3;" onclick="showPage('ai-assistant')">🤖 AI Data Assistant</button>
         </div>
 
         <div class="feature-grid-quick">
@@ -833,6 +949,10 @@
             <div class="feature-quick-card" onclick="showPage('bookings')">
                 <h4>📋 FR-06 Manage</h4>
                 <p>Real-time booking confirmation and cancellations.</p>
+            </div>
+            <div class="feature-quick-card" onclick="showPage('ai-assistant')">
+                <h4>🤖 AI Assistant</h4>
+                <p>Gemini AI analysis of bookings, expenses & operations.</p>
             </div>
         </div>
     </div>
@@ -1035,7 +1155,180 @@
     </div>
 </section>
 
-<!-- ================= 8. USER ACCOUNT (FR-01) ================= -->
+<!-- ================= 8. REVIEWS & FEEDBACK (FR-06) ================= -->
+<section id="reviews" class="page">
+    <h2 class="title">⭐ Reviews & Traveler Feedback</h2>
+    <p class="subtitle">Share ratings and feedback for destinations, packages, and hotels (FR-06)</p>
+
+    <div class="planner-container">
+        <div class="planner-card">
+            <h3 style="color: #0c2461; margin-bottom: 15px;">✍️ Submit a Review</h3>
+
+            <label>Category</label>
+            <select id="rev-type" onchange="updateReviewItemOptions()">
+                <option value="Destination">🗺️ Destination</option>
+                <option value="Package">🎒 Package</option>
+                <option value="Hotel">🏨 Hotel</option>
+            </select>
+
+            <label>Select Item</label>
+            <select id="rev-target-item">
+                <!-- Populated dynamically -->
+            </select>
+
+            <label>Star Rating</label>
+            <select id="rev-rating">
+                <option value="5.0">⭐⭐⭐⭐⭐ (5.0 Excellent)</option>
+                <option value="4.5">⭐⭐⭐⭐½ (4.5 Very Good)</option>
+                <option value="4.0">⭐⭐⭐⭐ (4.0 Good)</option>
+                <option value="3.5">⭐⭐⭐½ (3.5 Average)</option>
+                <option value="3.0">⭐⭐⭐ (3.0 Decent)</option>
+            </select>
+
+            <label>Your Feedback / Comments</label>
+            <textarea id="rev-comment" rows="4" placeholder="Describe your experience, stay highlights, or travel tips..."></textarea>
+
+            <button class="btn" style="margin-top: 15px;" onclick="addReviewItem()">⭐ Submit Review</button>
+        </div>
+
+        <div class="planner-card">
+            <h3 style="color: #0c2461; margin-bottom: 15px;">💬 Recent Traveler Reviews</h3>
+            <div id="reviews-list-container" style="max-height: 400px; overflow-y: auto;">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= 9. AI MANAGEMENT DATA ASSISTANT ================= -->
+<section id="ai-assistant" class="page">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;">
+        <h2 class="title" style="margin-bottom: 0;">🤖 AI Management Data Analyst</h2>
+        <span id="ai-model-badge" style="background: #e3f2fd; color: #0984e3; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid #74b9ff;">
+            ⚡ Google Gemini 3.8 Flash
+        </span>
+    </div>
+    <p class="subtitle">Real-time business intelligence, financial tracking, and operational recommendations synthesized from live travel records</p>
+
+    <!-- LIVE DATA KPI SUMMARY CARDS -->
+    <div class="ai-kpi-grid">
+        <div class="ai-kpi-card" style="border-top-color: #0984e3;">
+            <div class="ai-kpi-title">Gross Booking Volume</div>
+            <div class="ai-kpi-value" id="ai-kpi-revenue">₹0</div>
+            <div class="ai-kpi-sub" id="ai-kpi-bookings">0 Bookings Tracked</div>
+        </div>
+        <div class="ai-kpi-card" style="border-top-color: #2ed573;">
+            <div class="ai-kpi-title">Net Operating Margin</div>
+            <div class="ai-kpi-value" id="ai-kpi-net">₹0</div>
+            <div class="ai-kpi-sub" id="ai-kpi-expenses" style="color: #ff4757;">₹0 Logged Expenses</div>
+        </div>
+        <div class="ai-kpi-card" style="border-top-color: #ffa502;">
+            <div class="ai-kpi-title">Trip Planning Pipeline</div>
+            <div class="ai-kpi-value" id="ai-kpi-plans">0 Plans</div>
+            <div class="ai-kpi-sub" id="ai-kpi-budget" style="color: #e67e22;">₹0 Projected Budget</div>
+        </div>
+        <div class="ai-kpi-card" style="border-top-color: #9b59b6;">
+            <div class="ai-kpi-title">Traveler Satisfaction</div>
+            <div class="ai-kpi-value" id="ai-kpi-rating">0.0 ⭐</div>
+            <div class="ai-kpi-sub" id="ai-kpi-reviews" style="color: #8e44ad;">0 Verified Reviews</div>
+        </div>
+    </div>
+
+    <!-- AI PROMPT & ANALYSIS CONTROLS -->
+    <div class="planner-card" style="margin-bottom: 25px;">
+        <h3 style="color: #0c2461; margin-bottom: 12px;">🎯 Analysis Focus Presets</h3>
+        <p style="font-size: 13px; color: #636e72; margin-bottom: 14px;">Select an instant operational audit or ask any custom question about your travel management metrics:</p>
+        
+        <div class="ai-presets-container">
+            <button type="button" class="ai-preset-chip" onclick="selectAiPreset('Provide a comprehensive executive operations & financial review covering revenue, top destinations, and margin.', 'Overview')">
+                📊 Operations & Financial Overview
+            </button>
+            <button type="button" class="ai-preset-chip" onclick="selectAiPreset('Analyze booking conversion rates, cancellations, and reservation pipeline risks.', 'Revenue & Bookings')">
+                💰 Booking Status & Risk Analysis
+            </button>
+            <button type="button" class="ai-preset-chip" onclick="selectAiPreset('Examine our expense distribution across activities, dining, and transit to optimize spending.', 'Expenses & Budget')">
+                💸 Expense & Budget Optimization
+            </button>
+            <button type="button" class="ai-preset-chip" onclick="selectAiPreset('Which packages and destinations are performing best, and what should we expand next season?', 'Packages & Destinations')">
+                🎒 Destination & Package Trends
+            </button>
+            <button type="button" class="ai-preset-chip" onclick="selectAiPreset('Analyze customer feedback sentiment, top praised features, and areas needing service improvement.', 'Customer Feedback')">
+                ⭐ Traveler Satisfaction & Sentiment
+            </button>
+        </div>
+
+        <div class="form-row" style="margin-top: 15px;">
+            <div style="flex: 2;">
+                <label for="ai-custom-query"><strong>Custom Analysis Prompt</strong></label>
+                <textarea id="ai-custom-query" rows="3" placeholder="E.g., Which destination yields the highest average booking value? How can we reduce cancellations?"></textarea>
+            </div>
+            <div style="flex: 1;">
+                <label for="ai-focus-area"><strong>Target Area</strong></label>
+                <select id="ai-focus-area" style="margin-bottom: 14px;">
+                    <option value="Overview">Comprehensive Executive Audit</option>
+                    <option value="Revenue & Bookings">Revenue & Reservation Pipeline</option>
+                    <option value="Expenses & Budget">Operational Expenses & Margin</option>
+                    <option value="Packages & Destinations">Packages & Catalog Demand</option>
+                    <option value="Customer Feedback">Traveler Sentiment & Reviews</option>
+                </select>
+                <button class="btn" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="runAiAnalysis()">
+                    <span>✨ Run AI Analysis</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI ANALYSIS OUTPUT CONTAINER -->
+    <div id="ai-output-container">
+        <!-- Initial / Empty State -->
+        <div id="ai-empty-state" class="ai-loading-box" style="border-style: solid; border-color: #dfe4ea; background: #fdfdfd;">
+            <div style="font-size: 38px; margin-bottom: 10px;">🤖</div>
+            <h3 style="color: #0c2461; margin-bottom: 6px;">Ready to Analyze Management Data</h3>
+            <p style="color: #636e72; max-width: 550px; margin: 0 auto 16px; font-size: 14px;">
+                Click any of the pre-configured operational presets above or type a custom question. The AI assistant synthesizes live database records into structured executive recommendations.
+            </p>
+            <button class="btn btn-outline" onclick="selectAiPreset('Provide a comprehensive executive operations & financial review covering revenue, top destinations, and margin.', 'Overview')">
+                Run Quick Operations Audit
+            </button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="ai-loading-state" class="ai-loading-box" style="display: none;">
+            <div class="ai-spinner"></div>
+            <h3 style="color: #0c2461; margin-bottom: 6px;">Synthesizing Management Records...</h3>
+            <p style="color: #0984e3; font-weight: 600; font-size: 14px; margin-bottom: 4px;" id="ai-loading-status-text">
+                Querying live bookings, expenses, ratings, and itineraries with Gemini 3.8 Flash...
+            </p>
+            <span style="font-size: 12px; color: #a4b0be;">Server-side AI orchestration • Safe credential architecture</span>
+        </div>
+
+        <!-- Error State -->
+        <div id="ai-error-state" class="ai-loading-box" style="display: none; border-color: #ff6b6b; background: #fff5f5;">
+            <div style="font-size: 38px; margin-bottom: 10px;">⚠️</div>
+            <h3 style="color: #d63031; margin-bottom: 6px;">Unable to Complete AI Analysis</h3>
+            <p id="ai-error-message" style="color: #636e72; font-size: 14px; margin-bottom: 16px;">An unexpected error occurred.</p>
+            <button class="btn" onclick="runAiAnalysis()">Retry Analysis 🔄</button>
+        </div>
+
+        <!-- Result Card -->
+        <div id="ai-result-card" class="ai-result-box" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f2f6; padding-bottom: 12px; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <span id="ai-result-badge" class="status-badge status-confirmed">⚡ Gemini 3.8 Flash</span>
+                    <span id="ai-result-timestamp" style="font-size: 12px; color: #747d8c; margin-left: 10px;"></span>
+                </div>
+                <button id="copy-analysis-btn" class="btn btn-outline" style="padding: 6px 14px; font-size: 13px;" onclick="copyAiAnalysis()">
+                    📋 Copy Insights
+                </button>
+            </div>
+            <div id="ai-result-content">
+                <!-- Rendered analysis markdown/HTML -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= 10. USER ACCOUNT (FR-01) ================= -->
 <section id="account" class="page">
     <h2 class="title">👤 User Account & Profile</h2>
     <p class="subtitle">Manage user profiles and switch between accounts (FR-01)</p>
@@ -1183,6 +1476,7 @@
                 <li><code>packages</code>: Holiday packages, inclusions, and discounts (FR-05)</li>
                 <li><code>bookings</code>: Confirmed and cancelled user reservations (FR-06)</li>
                 <li><code>expenses</code>: Trip category expenses and real-time ledger</li>
+                <li><code>reviews</code>: Traveler feedback, star ratings, and review comments (FR-06)</li>
             </ul>
 
             <h4 style="color: #0984e3; margin-top: 15px;">4. Companion Web Pages in Repository</h4>
@@ -1216,6 +1510,7 @@
     let CURRENT_PLANS = [];
     let CURRENT_BOOKINGS = [];
     let CURRENT_EXPENSES = [];
+    let CURRENT_REVIEWS = [];
 
     // Check Supabase PostgreSQL API Status
     async function checkDbStatus() {
@@ -1305,6 +1600,7 @@
             filterDestinations();
             renderPackages();
             filterHotels();
+            updateReviewItemOptions();
         } catch (err) {
             console.error('Error loading initial data from backend:', err);
         }
@@ -1312,19 +1608,22 @@
 
     async function loadUserData() {
         try {
-            const [plansRes, bookingsRes, expensesRes] = await Promise.all([
+            const [plansRes, bookingsRes, expensesRes, reviewsRes] = await Promise.all([
                 fetch(`/api/plans?userId=${currentUser}`).then(r => r.json()).catch(() => []),
                 fetch(`/api/bookings?userId=${currentUser}`).then(r => r.json()).catch(() => []),
-                fetch(`/api/expenses?userId=${currentUser}`).then(r => r.json()).catch(() => [])
+                fetch(`/api/expenses?userId=${currentUser}`).then(r => r.json()).catch(() => []),
+                fetch('/api/reviews').then(r => r.json()).catch(() => [])
             ]);
 
             CURRENT_PLANS = plansRes || [];
             CURRENT_BOOKINGS = bookingsRes || [];
             CURRENT_EXPENSES = expensesRes || [];
+            CURRENT_REVIEWS = reviewsRes || [];
 
             renderSavedPlans();
             renderBookings();
             updateExpenseSummary();
+            renderReviews();
         } catch (err) {
             console.error('Error loading user data from backend:', err);
         }
@@ -1343,6 +1642,10 @@
         const navBtn = document.getElementById('nav-' + pageName);
         if (navBtn) {
             navBtn.classList.add('active-nav');
+        }
+
+        if (pageName === 'ai-assistant') {
+            loadAiManagementSummary();
         }
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1788,6 +2091,107 @@
         updateExpenseSummary();
     }
 
+    // Reviews & Feedback System (FR-06)
+    function updateReviewItemOptions() {
+        const typeEl = document.getElementById('rev-type');
+        const targetEl = document.getElementById('rev-target-item');
+        if (!typeEl || !targetEl) return;
+
+        const category = typeEl.value;
+        let items = [];
+        if (category === 'Destination') {
+            items = DESTINATIONS.map(d => ({ id: d.id, name: d.name }));
+        } else if (category === 'Package') {
+            items = PACKAGES.map(p => ({ id: p.id, name: p.title }));
+        } else if (category === 'Hotel') {
+            items = HOTELS.map(h => ({ id: h.id, name: `${h.name} (${h.city})` }));
+        }
+
+        targetEl.innerHTML = items.map(item => `<option value="${item.id}" data-name="${item.name}">${item.name}</option>`).join('');
+    }
+
+    function renderReviews() {
+        const container = document.getElementById('reviews-list-container');
+        if (!container) return;
+
+        if (!CURRENT_REVIEWS || CURRENT_REVIEWS.length === 0) {
+            container.innerHTML = '<p style="color: #636e72; font-style: italic; padding: 10px;">No reviews yet. Be the first traveler to share your experience!</p>';
+            return;
+        }
+
+        container.innerHTML = CURRENT_REVIEWS.map(rev => {
+            const userName = (USERS[rev.user_id] && USERS[rev.user_id].name) || rev.user_id || 'Verified Traveler';
+            const isOwner = rev.user_id === currentUser;
+            const stars = '⭐'.repeat(Math.round(rev.rating || 5));
+            return `
+                <div style="background: white; border: 1px solid #dfe6e9; border-radius: 8px; padding: 14px; margin-bottom: 12px; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #0c2461; font-size: 15px;">${rev.target_name || 'Travel Experience'}</strong>
+                        <span style="font-size: 13px;">${stars} (${rev.rating})</span>
+                    </div>
+                    <div style="font-size: 12px; color: #636e72; margin-bottom: 8px;">
+                        By <strong>${userName}</strong> • Category: <span style="background: #eef2f7; padding: 2px 8px; border-radius: 12px;">${rev.target_type}</span>
+                    </div>
+                    <p style="font-size: 13.5px; color: #2d3436; margin: 0; line-height: 1.4;">${rev.comment || 'Great experience!'}</p>
+                    ${isOwner ? `<button onclick="deleteReviewItem('${rev.id}')" style="margin-top: 10px; background: none; border: none; color: #e74c3c; font-size: 12px; cursor: pointer; text-decoration: underline; padding: 0;">Delete Review</button>` : ''}
+                </div>
+            `;
+        }).join('');
+    }
+
+    async function addReviewItem() {
+        const typeEl = document.getElementById('rev-type');
+        const targetEl = document.getElementById('rev-target-item');
+        const ratingEl = document.getElementById('rev-rating');
+        const commentEl = document.getElementById('rev-comment');
+
+        const selectedOption = targetEl.options[targetEl.selectedIndex];
+        const targetName = selectedOption ? (selectedOption.getAttribute('data-name') || selectedOption.text) : 'Travel Experience';
+        const targetId = targetEl.value;
+        const comment = commentEl.value.trim();
+
+        if (!comment) {
+            alert('Please enter a few words about your travel experience.');
+            return;
+        }
+
+        const newReview = {
+            user_id: currentUser,
+            target_type: typeEl.value,
+            target_id: targetId,
+            target_name: targetName,
+            rating: parseFloat(ratingEl.value),
+            comment: comment
+        };
+
+        try {
+            const res = await fetch('/api/reviews', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newReview)
+            });
+            const data = await res.json();
+            CURRENT_REVIEWS.unshift(data);
+        } catch (e) {
+            CURRENT_REVIEWS.unshift({ ...newReview, id: 'rev-' + Date.now() });
+        }
+
+        commentEl.value = '';
+        renderReviews();
+        alert('Thank you! Your review has been saved to the Supabase database.');
+    }
+
+    async function deleteReviewItem(reviewId) {
+        if (!confirm('Are you sure you want to remove this review?')) return;
+        try {
+            await fetch(`/api/reviews/${reviewId}`, { method: 'DELETE' });
+        } catch (e) {
+            console.warn('Delete review offline fallback');
+        }
+        CURRENT_REVIEWS = CURRENT_REVIEWS.filter(r => r.id !== reviewId);
+        renderReviews();
+    }
+
     // User Profile Switcher (FR-01)
     async function switchUser(userId) {
         currentUser = userId;
@@ -1856,10 +2260,223 @@
         }
     };
 
+    // ==============================================================================
+    // AI MANAGEMENT DATA ASSISTANT
+    // ==============================================================================
+    let LAST_AI_SUMMARY = null;
+    let LAST_AI_ANALYSIS_RAW = '';
+
+    async function loadAiManagementSummary() {
+        try {
+            const res = await fetch('/api/ai/management-summary');
+            if (!res.ok) throw new Error('Failed to load management metrics');
+            const data = await res.json();
+            LAST_AI_SUMMARY = data.summary;
+
+            const o = data.summary?.overview || {};
+            const revEl = document.getElementById('ai-kpi-revenue');
+            const bookingsEl = document.getElementById('ai-kpi-bookings');
+            const netEl = document.getElementById('ai-kpi-net');
+            const expEl = document.getElementById('ai-kpi-expenses');
+            const plansEl = document.getElementById('ai-kpi-plans');
+            const budgetEl = document.getElementById('ai-kpi-budget');
+            const ratingEl = document.getElementById('ai-kpi-rating');
+            const reviewsEl = document.getElementById('ai-kpi-reviews');
+
+            if (revEl) revEl.textContent = `₹${(o.totalRevenue || 0).toLocaleString()}`;
+            if (bookingsEl) bookingsEl.textContent = `${o.totalBookings || 0} Bookings (${o.confirmedBookings || 0} Confirmed)`;
+            if (netEl) netEl.textContent = `₹${(o.netRevenue || 0).toLocaleString()}`;
+            if (expEl) expEl.textContent = `₹${(o.totalExpenses || 0).toLocaleString()} Logged Expenses`;
+            if (plansEl) plansEl.textContent = `${o.totalPlans || 0} Plans`;
+            if (budgetEl) budgetEl.textContent = `₹${(o.totalPlannedBudget || 0).toLocaleString()} Projected Budget`;
+            if (ratingEl) ratingEl.textContent = `${o.avgRating || 0} ⭐`;
+            if (reviewsEl) reviewsEl.textContent = `${o.totalReviews || 0} Verified Reviews`;
+
+            const modelBadge = document.getElementById('ai-model-badge');
+            if (modelBadge) {
+                if (data.aiConfigured) {
+                    modelBadge.innerHTML = '⚡ Google Gemini 3.8 Flash (Active)';
+                    modelBadge.style.background = '#e3f2fd';
+                    modelBadge.style.color = '#0984e3';
+                } else {
+                    modelBadge.innerHTML = '⚡ Gemini 3.8 Flash • Server-Side API';
+                    modelBadge.style.background = '#f1f2f6';
+                    modelBadge.style.color = '#2f3542';
+                }
+            }
+        } catch (err) {
+            console.warn('Could not refresh AI summary metrics:', err);
+        }
+    }
+
+    function selectAiPreset(presetQuery, focusArea) {
+        const queryInput = document.getElementById('ai-custom-query');
+        const focusSelect = document.getElementById('ai-focus-area');
+        if (queryInput) queryInput.value = presetQuery;
+        if (focusSelect) focusSelect.value = focusArea;
+        runAiAnalysis();
+    }
+
+    function formatMarkdown(text) {
+        if (!text) return '';
+        let html = text
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+        html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+        html = html.replace(/^## (.*$)/gim, '<h3>$1</h3>');
+        html = html.replace(/^# (.*$)/gim, '<h3>$1</h3>');
+        html = html.replace(/^#### (.*$)/gim, '<h4>$1</h4>');
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+        const lines = html.split('\n');
+        let inList = false;
+        let formattedLines = [];
+
+        for (let line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+                if (!inList) {
+                    formattedLines.push('<ul style="margin-left: 20px; margin-bottom: 14px;">');
+                    inList = true;
+                }
+                formattedLines.push(`<li style="margin-bottom: 6px;">${trimmed.substring(2)}</li>`);
+            } else if (/^\d+\.\s/.test(trimmed)) {
+                if (!inList) {
+                    formattedLines.push('<ol style="margin-left: 20px; margin-bottom: 14px;">');
+                    inList = true;
+                }
+                const content = trimmed.replace(/^\d+\.\s/, '');
+                formattedLines.push(`<li style="margin-bottom: 6px;">${content}</li>`);
+            } else {
+                if (inList) {
+                    formattedLines.push('</ul>');
+                    inList = false;
+                }
+                if (trimmed.length > 0) {
+                    if (!trimmed.startsWith('<h')) {
+                        formattedLines.push(`<p style="margin-bottom: 10px;">${trimmed}</p>`);
+                    } else {
+                        formattedLines.push(trimmed);
+                    }
+                }
+            }
+        }
+        if (inList) formattedLines.push('</ul>');
+
+        return formattedLines.join('\n');
+    }
+
+    async function runAiAnalysis() {
+        const queryInput = document.getElementById('ai-custom-query');
+        const focusSelect = document.getElementById('ai-focus-area');
+        const query = (queryInput?.value || '').trim() || 'Provide a comprehensive executive operations & financial review covering revenue, top destinations, and margin.';
+        const focusArea = focusSelect?.value || 'Overview';
+
+        const emptyState = document.getElementById('ai-empty-state');
+        const loadingState = document.getElementById('ai-loading-state');
+        const errorState = document.getElementById('ai-error-state');
+        const resultCard = document.getElementById('ai-result-card');
+        const resultContent = document.getElementById('ai-result-content');
+        const resultBadge = document.getElementById('ai-result-badge');
+        const resultTimestamp = document.getElementById('ai-result-timestamp');
+        const loadingStatusText = document.getElementById('ai-loading-status-text');
+
+        if (emptyState) emptyState.style.display = 'none';
+        if (errorState) errorState.style.display = 'none';
+        if (resultCard) resultCard.style.display = 'none';
+        if (loadingState) loadingState.style.display = 'block';
+        if (loadingStatusText) {
+            loadingStatusText.textContent = `Synthesizing "${focusArea}" with Gemini 3.8 Flash...`;
+        }
+
+        try {
+            const res = await fetch('/api/ai/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query, focusArea })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || `Server responded with status ${res.status}`);
+            }
+
+            const data = await res.json();
+            LAST_AI_ANALYSIS_RAW = data.analysis || '';
+
+            if (resultBadge) {
+                if (data.mode === 'gemini-3.8-flash') {
+                    resultBadge.textContent = '⚡ Generated by Gemini 3.8 Flash';
+                    resultBadge.className = 'status-badge status-confirmed';
+                } else {
+                    resultBadge.textContent = '⚙️ Live Data Analytics Engine';
+                    resultBadge.className = 'status-badge';
+                    resultBadge.style.background = '#e3f2fd';
+                    resultBadge.style.color = '#0984e3';
+                }
+            }
+
+            if (resultTimestamp) {
+                resultTimestamp.textContent = `Generated: ${new Date().toLocaleTimeString()} (Focus: ${focusArea})`;
+            }
+
+            if (resultContent) {
+                let formatted = formatMarkdown(data.analysis || 'No analysis available.');
+                if (data.notice) {
+                    formatted = `<div style="background: #f8f9fa; border-left: 3px solid #0984e3; padding: 10px 14px; margin-bottom: 15px; font-size: 13px; color: #636e72;">ℹ️ ${data.notice}</div>` + formatted;
+                }
+                resultContent.innerHTML = formatted;
+            }
+
+            if (loadingState) loadingState.style.display = 'none';
+            if (resultCard) resultCard.style.display = 'block';
+
+            // Refresh KPI metrics in case data changed
+            loadAiManagementSummary();
+        } catch (err) {
+            if (loadingState) loadingState.style.display = 'none';
+            if (errorState) {
+                errorState.style.display = 'block';
+                const errMsg = document.getElementById('ai-error-message');
+                if (errMsg) errMsg.textContent = err.message || 'Unable to communicate with the analysis service.';
+            }
+            console.error('AI Analysis failed:', err);
+        }
+    }
+
+    async function copyAiAnalysis() {
+        const btn = document.getElementById('copy-analysis-btn');
+        if (!LAST_AI_ANALYSIS_RAW) return;
+
+        try {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(LAST_AI_ANALYSIS_RAW);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = LAST_AI_ANALYSIS_RAW;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+            if (btn) {
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            }
+        } catch (e) {
+            console.warn('Copy failed:', e);
+        }
+    }
+
     // Initialization
     window.addEventListener('DOMContentLoaded', async () => {
         await checkDbStatus();
         await loadInitialData();
+        await loadAiManagementSummary();
     });
 </script>
 

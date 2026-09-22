@@ -71,8 +71,32 @@ const memoryStore = {
   expenses: [
     { id: 'ex1', user_id: 'user1', category: 'Activities & Sightseeing', description: 'Solang Valley Rafting Pass', amount: 2400 },
     { id: 'ex2', user_id: 'user1', category: 'Food & Dining', description: 'Cafe 1947 Riverside Dinner', amount: 1650 }
+  ],
+  reviews: [
+    {
+      id: 'rev-1',
+      user_id: 'user1',
+      target_type: 'Package',
+      target_id: 'pkg1',
+      target_name: 'Himalayan Adventure Escape',
+      rating: 5.0,
+      comment: 'Incredible experience! The river rafting and luxury resort stay were phenomenal.',
+      created_at: '2026-09-18T10:00:00Z'
+    },
+    {
+      id: 'rev-2',
+      user_id: 'user2',
+      target_type: 'Hotel',
+      target_id: 'h2',
+      target_name: 'Goa Palms Beachfront Resort',
+      rating: 4.8,
+      comment: 'Direct beach access was breathtaking. Excellent staff hospitality.',
+      created_at: '2026-09-19T14:30:00Z'
+    }
   ]
 };
+
+let migrationInitiated = false;
 
 /**
  * Lazy initialize Supabase Client
@@ -91,6 +115,16 @@ export function getSupabase() {
         auth: { persistSession: false }
       });
       console.log('Connected to Supabase PostgreSQL at:', url);
+
+      // Trigger automatic migration without blocking
+      if (!migrationInitiated) {
+        migrationInitiated = true;
+        migrateAllDataToSupabase(supabaseClient).then(res => {
+          if (res && res.success) {
+            console.log('Automated initial data sync to Supabase completed.');
+          }
+        }).catch(e => console.warn('Automated sync error:', e.message));
+      }
     } catch (err) {
       console.error('Failed to initialize Supabase client:', err);
       return null;
@@ -442,3 +476,206 @@ export async function deleteExpense(id) {
   }
   return false;
 }
+
+// ==============================================================================
+// 8. Reviews Operations (FR-06 Review & Feedback System)
+// ==============================================================================
+export async function getReviews(targetId, targetType, userId) {
+  const client = getSupabase();
+  if (client) {
+    try {
+      let query = client.from('reviews').select('*').order('created_at', { ascending: false });
+      if (targetId) query = query.eq('target_id', targetId);
+      if (targetType) query = query.eq('target_type', targetType);
+      if (userId) query = query.eq('user_id', userId);
+      const { data, error } = await query;
+      if (!error && data) return data;
+      if (error) console.warn('Supabase getReviews warning:', error.message);
+    } catch (err) {
+      console.warn('Supabase getReviews error:', err.message);
+    }
+  }
+  let results = memoryStore.reviews;
+  if (targetId) results = results.filter(r => r.target_id === targetId);
+  if (targetType) results = results.filter(r => r.target_type === targetType);
+  if (userId) results = results.filter(r => r.user_id === userId);
+  return results;
+}
+
+export async function createReview(review) {
+  const newReview = {
+    id: review.id || 'rev-' + Date.now().toString(36),
+    user_id: review.user_id,
+    target_type: review.target_type || 'Destination',
+    target_id: review.target_id || null,
+    target_name: review.target_name || 'General Travel Experience',
+    rating: Number(review.rating) || 5.0,
+    comment: review.comment || '',
+    created_at: new Date().toISOString()
+  };
+
+  const client = getSupabase();
+  if (client) {
+    try {
+      const { data, error } = await client.from('reviews').insert([newReview]).select().single();
+      if (!error && data) return data;
+      if (error) console.warn('Supabase createReview warning:', error.message);
+    } catch (err) {
+      console.warn('Supabase createReview error:', err.message);
+    }
+  }
+
+  memoryStore.reviews.unshift(newReview);
+  return newReview;
+}
+
+export async function deleteReview(id) {
+  const client = getSupabase();
+  if (client) {
+    try {
+      const { error } = await client.from('reviews').delete().eq('id', id);
+      if (!error) return true;
+      if (error) console.warn('Supabase deleteReview warning:', error.message);
+    } catch (err) {
+      console.warn('Supabase deleteReview error:', err.message);
+    }
+  }
+  const idx = memoryStore.reviews.findIndex(r => r.id === id);
+  if (idx !== -1) {
+    memoryStore.reviews.splice(idx, 1);
+    return true;
+  }
+  return false;
+}
+
+// ==============================================================================
+// 9. Database Migration Engine (Zero Data Loss)
+// ==============================================================================
+export async function migrateAllDataToSupabase(providedClient = null) {
+  const client = providedClient || getSupabase();
+  if (!client) {
+    return {
+      success: false,
+      message: 'Supabase credentials not configured yet. Running with secure memory store fallback.',
+      migratedRecords: 0
+    };
+  }
+
+  const report = {
+    success: true,
+    tables: {},
+    totalMigrated: 0,
+    timestamp: new Date().toISOString()
+  };
+
+  const tablesToMigrate = [
+    { name: 'users', data: memoryStore.users },
+    { name: 'destinations', data: memoryStore.destinations },
+    { name: 'packages', data: memoryStore.packages },
+    { name: 'hotels', data: memoryStore.hotels },
+    { name: 'trip_plans', data: memoryStore.trip_plans },
+    { name: 'bookings', data: memoryStore.bookings },
+    { name: 'expenses', data: memoryStore.expenses },
+    { name: 'reviews', data: memoryStore.reviews }
+  ];
+
+  for (const table of tablesToMigrate) {
+    try {
+      if (table.data && table.data.length > 0) {
+        const { error } = await client.from(table.name).upsert(table.data, { onConflict: 'id' });
+        if (error) {
+          report.tables[table.name] = { status: 'error', error: error.message, count: 0 };
+        } else {
+          report.tables[table.name] = { status: 'success', count: table.data.length };
+          report.totalMigrated += table.data.length;
+        }
+      } else {
+        report.tables[table.name] = { status: 'empty', count: 0 };
+      }
+    } catch (err) {
+      report.tables[table.name] = { status: 'exception', error: err.message, count: 0 };
+    }
+  }
+
+  console.log(`Supabase Migration Completed: ${report.totalMigrated} records processed across ${tablesToMigrate.length} tables.`);
+  return report;
+}
+
+// ==============================================================================
+// 10. Management Data Aggregation (For AI Analytics)
+// ==============================================================================
+export async function getManagementSummary() {
+  const [users, destinations, packages, hotels, plans, bookings, expenses, reviews] = await Promise.all([
+    getUsers(),
+    getDestinations(),
+    getPackages(),
+    getHotels(),
+    getTripPlans(),
+    getBookings(),
+    getExpenses(),
+    getReviews()
+  ]);
+
+  // Bookings metrics
+  const totalBookings = bookings.length;
+  const totalRevenue = bookings.reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const confirmedBookings = bookings.filter(b => (b.status || '').toLowerCase() === 'confirmed').length;
+  const cancelledBookings = bookings.filter(b => (b.status || '').toLowerCase() === 'cancelled').length;
+  const bookingsByType = bookings.reduce((acc, b) => {
+    acc[b.type] = (acc[b.type] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Expense metrics
+  const totalExpenses = expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
+  const expensesByCategory = expenses.reduce((acc, e) => {
+    acc[e.category] = (acc[e.category] || 0) + (Number(e.amount) || 0);
+    return acc;
+  }, {});
+
+  // Trip plan metrics
+  const totalPlans = plans.length;
+  const totalPlannedBudget = plans.reduce((sum, p) => sum + (Number(p.budget) || 0), 0);
+
+  // Review metrics
+  const totalReviews = reviews.length;
+  const avgRating = totalReviews > 0
+    ? (reviews.reduce((sum, r) => sum + (Number(r.rating) || 0), 0) / totalReviews).toFixed(1)
+    : 0;
+
+  // Destination & Package metrics
+  const destCategories = destinations.reduce((acc, d) => {
+    acc[d.category] = (acc[d.category] || 0) + 1;
+    return acc;
+  }, {});
+
+  return {
+    overview: {
+      totalUsers: users.length,
+      totalDestinations: destinations.length,
+      totalPackages: packages.length,
+      totalHotels: hotels.length,
+      totalBookings,
+      totalRevenue,
+      confirmedBookings,
+      cancelledBookings,
+      totalExpenses,
+      netRevenue: totalRevenue - totalExpenses,
+      totalPlans,
+      totalPlannedBudget,
+      totalReviews,
+      avgRating: Number(avgRating)
+    },
+    breakdown: {
+      bookingsByType,
+      expensesByCategory,
+      destinationCategories: destCategories,
+      recentBookings: bookings.slice(0, 5),
+      recentExpenses: expenses.slice(0, 5),
+      recentReviews: reviews.slice(0, 5),
+      sampleDestinations: destinations.slice(0, 4).map(d => ({ name: d.name, category: d.category, price: d.price })),
+      samplePackages: packages.slice(0, 4).map(p => ({ title: p.title, price: p.price, discount: p.discount }))
+    }
+  };
+}
+

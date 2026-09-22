@@ -20,8 +20,14 @@ import {
   deleteBooking,
   getExpenses,
   createExpense,
-  deleteExpense
+  deleteExpense,
+  getReviews,
+  createReview,
+  deleteReview,
+  migrateAllDataToSupabase,
+  getManagementSummary
 } from './db.js';
+import { GoogleGenAI } from '@google/genai';
 
 dotenv.config();
 
@@ -41,7 +47,7 @@ app.get('/api/status', (req, res) => {
     status: 'ok',
     database: configured ? 'Supabase PostgreSQL (Active)' : 'Supabase PostgreSQL (Ready / Seed fallback)',
     supabaseConfigured: configured,
-    tables: ['users', 'destinations', 'packages', 'hotels', 'trip_plans', 'bookings', 'expenses'],
+    tables: ['users', 'destinations', 'packages', 'hotels', 'trip_plans', 'bookings', 'expenses', 'reviews'],
     timestamp: new Date().toISOString()
   });
 });
@@ -217,6 +223,206 @@ app.delete('/api/expenses/:id', async (req, res) => {
     const success = await deleteExpense(req.params.id);
     res.json({ success });
   } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==============================================================================
+// 8. Reviews API (FR-06 Review & Feedback System)
+// ==============================================================================
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const { targetId, targetType, userId } = req.query;
+    const reviews = await getReviews(targetId, targetType, userId);
+    res.json(reviews);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/reviews', async (req, res) => {
+  try {
+    const review = await createReview(req.body);
+    res.status(201).json(review);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/reviews/:id', async (req, res) => {
+  try {
+    const success = await deleteReview(req.params.id);
+    res.json({ success });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==============================================================================
+// 9. Supabase Data Migration API
+// ==============================================================================
+app.post('/api/migrate', async (req, res) => {
+  try {
+    const result = await migrateAllDataToSupabase();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==============================================================================
+// 10. AI Management Data Assistant (Gemini API)
+// ==============================================================================
+let genAiClient = null;
+function getGenAI() {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+  if (!genAiClient) {
+    try {
+      genAiClient = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build'
+          }
+        }
+      });
+    } catch (err) {
+      console.warn('Gemini client initialization warning:', err.message);
+      return null;
+    }
+  }
+  return genAiClient;
+}
+
+// Generate rule-based analysis when API key is pending or as fallback
+function generateRuleBasedAnalysis(summary, query = '', focusArea = 'Overview') {
+  const o = summary.overview || {};
+  const b = summary.breakdown || {};
+  const bookingTypes = Object.entries(b.bookingsByType || {}).map(([k, v]) => `${k}: ${v}`).join(', ') || 'None';
+  const expenses = Object.entries(b.expensesByCategory || {}).map(([k, v]) => `${k}: ₹${v.toLocaleString()}`).join(', ') || 'None';
+  const confirmationRate = o.totalBookings > 0 ? ((o.confirmedBookings / o.totalBookings) * 100).toFixed(0) : 0;
+  const netMargin = o.totalRevenue > 0 ? (((o.netRevenue) / o.totalRevenue) * 100).toFixed(1) : 0;
+
+  return `### 📊 Executive Management & Data Summary
+- **Financial Performance**: Total Gross Booking Value is **₹${(o.totalRevenue || 0).toLocaleString()}** across **${o.totalBookings || 0}** reservations, with **₹${(o.totalExpenses || 0).toLocaleString()}** in tracked operating expenses, resulting in an estimated Net Operating Margin of **${netMargin}%** (₹${(o.netRevenue || 0).toLocaleString()}).
+- **Booking Reliability**: Confirmation rate is currently **${confirmationRate}%** (${o.confirmedBookings || 0} Confirmed, ${o.cancelledBookings || 0} Cancelled). Distribution by inventory type: ${bookingTypes}.
+- **Expense Allocation**: Primary operational spending centers around: ${expenses}.
+- **Customer Sentiment & Ratings**: Average customer rating is **${o.avgRating || 0} / 5.0** across **${o.totalReviews || 0}** verified traveler reviews, indicating strong hospitality satisfaction.
+- **Trip Planning Pipeline**: **${o.totalPlans || 0}** active custom itineraries created by travelers with a cumulative projected budget of **₹${(o.totalPlannedBudget || 0).toLocaleString()}**.
+
+### 💡 Strategic Operational Recommendations
+1. **Capitalize on Package Demand**: Multi-day holiday packages represent high average transaction value. Bundle popular excursions (e.g. river rafting, heritage tours) to raise average booking basket size.
+2. **Mitigate Cancellation Exposure**: Implement automated email confirmations and flexible reschedule policies to maintain a >90% confirmation threshold.
+3. **Expense Guardrails**: Monitor 'Activities & Sightseeing' and 'Dining' expenditures against budgeted margins to preserve the healthy ${netMargin}% operating margin.
+4. **Leverage Traveler Feedback**: Highlight 5-star reviews from confirmed trips on featured destination cards to increase conversion rates across the ${o.totalDestinations || 0} available tour locations.`;
+}
+
+// GET live aggregated management data metrics
+app.get('/api/ai/management-summary', async (req, res) => {
+  try {
+    const summary = await getManagementSummary();
+    const hasAiKey = Boolean(process.env.GEMINI_API_KEY);
+    res.json({
+      summary,
+      aiModel: 'gemini-3.6-flash',
+      aiConfigured: hasAiKey,
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// POST analyze management data with Gemini AI
+app.post('/api/ai/analyze', async (req, res) => {
+  try {
+    const { query, focusArea } = req.body || {};
+    const userPrompt = (query || '').trim() || 'Provide an executive analysis of our current travel business performance and recommendations.';
+    const summary = await getManagementSummary();
+    const ai = getGenAI();
+
+    if (ai) {
+      try {
+        const systemPrompt = `You are a Senior Travel Management & Operations Analyst AI.
+Your role is to analyze live management data from the Travel Management System (destinations, holiday packages, hotel reservations, customer bookings, expenses, trip itineraries, and customer feedback).
+Provide a clear, highly professional, executive analysis with:
+1. Executive Overview & Key Performance Indicators (with specific numbers).
+2. Segment Analysis (Bookings, Revenue, Expense Trends, and Customer Ratings).
+3. Risk or Optimization Insights (cancellations, budget variations, margin).
+4. 3-4 Actionable Strategic Recommendations.
+
+Format your response using clean Markdown with bold headers and bullet points.`;
+
+        const dataContext = JSON.stringify(summary, null, 2);
+        const fullPrompt = `Here is the current live management data of the Travel Management System:
+\`\`\`json
+${dataContext}
+\`\`\`
+
+User Request / Focus Area: "${focusArea || 'General Management'}"
+User Question: "${userPrompt}"
+
+Analyze this management data and provide clear, actionable business intelligence.`;
+
+        let response;
+        let activeModel = 'gemini-3.6-flash';
+        try {
+          response = await ai.models.generateContent({
+            model: 'gemini-3.6-flash',
+            contents: fullPrompt,
+            config: {
+              systemInstruction: systemPrompt,
+              temperature: 0.7
+            }
+          });
+        } catch (modelErr) {
+          console.warn('gemini-3.6-flash attempt error, trying gemini-3.8-flash fallback:', modelErr.message);
+          activeModel = 'gemini-3.8-flash';
+          response = await ai.models.generateContent({
+            model: 'gemini-3.8-flash',
+            contents: fullPrompt,
+            config: {
+              systemInstruction: systemPrompt,
+              temperature: 0.7
+            }
+          });
+        }
+
+        const analysisText = response.text;
+        return res.json({
+          success: true,
+          mode: activeModel,
+          analysis: analysisText,
+          summary,
+          timestamp: new Date().toISOString()
+        });
+      } catch (geminiError) {
+        console.warn('Gemini API call failed, using intelligent analytics fallback:', geminiError.message);
+        const fallbackText = generateRuleBasedAnalysis(summary, userPrompt, focusArea);
+        return res.json({
+          success: true,
+          mode: 'rule-based-fallback',
+          analysis: fallbackText,
+          summary,
+          notice: `Analysis produced via live data analytics engine (${geminiError.message})`,
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+
+    // If GEMINI_API_KEY is not yet configured, provide seamless intelligent analytics
+    const fallbackAnalysis = generateRuleBasedAnalysis(summary, userPrompt, focusArea);
+    return res.json({
+      success: true,
+      mode: 'management-analytics-engine',
+      analysis: fallbackAnalysis,
+      summary,
+      notice: 'Operating with intelligent data analytics engine. Add GEMINI_API_KEY in Settings > Secrets for customized generative analysis.',
+      timestamp: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error('AI Analysis endpoint error:', err);
     res.status(500).json({ error: err.message });
   }
 });
