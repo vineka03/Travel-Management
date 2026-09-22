@@ -860,13 +860,413 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* RESPONSIVE */
+        /* ==============================================================================
+           MOBILE RESPONSIVENESS & TOUCH OPTIMIZATIONS
+           ============================================================================== */
+        
+        /* Base touch & overflow fixes */
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Smooth momentum scrolling on iOS */
+        * {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Responsive image safety */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Button touch-action and active feedback */
+        .btn, .filter-pill, .ai-preset-chip, .user-switch-btn, .repo-link, nav button {
+            touch-action: manipulation;
+        }
+        .btn:active, .filter-pill:active, .ai-preset-chip:active, .user-switch-btn:active {
+            transform: scale(0.97);
+        }
+
+        /* Mobile table scroll hint */
+        .mobile-table-hint {
+            display: none;
+            font-size: 12px;
+            color: #747d8c;
+            margin-bottom: 6px;
+            text-align: right;
+            font-weight: 500;
+        }
+
+        .modal-footer-bar {
+            background: #f0f7fc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .ai-prompt-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        /* --------------------------------------------------------------------------
+           TABLET BREAKPOINT: <= 900px
+           -------------------------------------------------------------------------- */
+        @media (max-width: 900px) {
+            /* Sleek horizontal swipeable navigation */
+            nav {
+                display: flex;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding: 10px 14px;
+                gap: 8px;
+                justify-content: flex-start;
+                scrollbar-width: none; /* Firefox */
+                -ms-overflow-style: none; /* IE/Edge */
+            }
+            nav::-webkit-scrollbar {
+                display: none; /* Chrome/Safari */
+            }
+            nav button {
+                flex-shrink: 0;
+                min-height: 44px;
+                margin: 0;
+                padding: 8px 14px;
+                font-size: 14px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 8px;
+            }
+
+            /* Responsive container padding */
+            .page {
+                padding: 30px 16px;
+            }
+
+            /* 2-column to 1-column layouts */
+            .planner-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .ai-prompt-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            /* Filter container */
+            .filter-container {
+                padding: 14px 16px;
+                gap: 12px;
+            }
+            .filter-pills {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 4px;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                width: 100%;
+            }
+            .filter-pills::-webkit-scrollbar {
+                display: none;
+            }
+            .filter-pill {
+                flex-shrink: 0;
+                min-height: 38px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* --------------------------------------------------------------------------
+           STANDARD MOBILE BREAKPOINT: <= 768px
+           -------------------------------------------------------------------------- */
         @media (max-width: 768px) {
-            header h1 { font-size: 30px; }
-            .home h2 { font-size: 32px; }
-            .home { padding-top: 70px; min-height: 500px; }
-            .form-row, .planner-container, .user-profiles-grid { grid-template-columns: 1fr; }
-            nav button { margin: 4px; font-size: 13px; }
+            /* Header */
+            header {
+                padding: 25px 16px;
+            }
+            header h1 {
+                font-size: 28px;
+            }
+            header p {
+                font-size: 15px;
+            }
+            .user-badge-bar {
+                font-size: 13px;
+                padding: 8px 14px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            /* Home Hero Section */
+            .home {
+                min-height: 480px;
+                padding: 60px 16px 40px;
+                margin-top: 10px;
+            }
+            .home h2 {
+                font-size: 28px;
+            }
+            .home p {
+                font-size: 16px;
+            }
+            .home-actions {
+                flex-direction: column;
+                width: 100%;
+                max-width: 320px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .home-actions .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Feature grid */
+            .feature-grid-quick {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+                margin-top: 35px;
+            }
+            .feature-quick-card {
+                padding: 14px;
+            }
+            .feature-quick-card h4 {
+                font-size: 15px;
+            }
+
+            /* Titles */
+            .title {
+                font-size: 24px;
+            }
+            .subtitle {
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+
+            /* Form improvements (Crucial: 16px font-size prevents iOS auto-zoom) */
+            .form-box {
+                padding: 24px 18px;
+                border-radius: 12px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            input, select, textarea {
+                font-size: 16px; /* Prevents iOS auto-zoom */
+                min-height: 46px;
+                padding: 10px 12px;
+            }
+            textarea {
+                min-height: 80px;
+            }
+
+            /* Buttons (touch targets >= 44px) */
+            .btn {
+                min-height: 44px;
+                padding: 11px 22px;
+                font-size: 15px;
+            }
+            .btn-sm {
+                min-height: 40px;
+                padding: 8px 14px;
+                font-size: 13px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Card Grids */
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 18px;
+            }
+            .travel-card-img-wrap {
+                height: 180px;
+            }
+            .travel-card-content {
+                padding: 16px;
+            }
+            .travel-card h3 {
+                font-size: 18px;
+            }
+
+            /* Tables & Horizontal Scroll */
+            .mobile-table-hint {
+                display: block;
+            }
+            .booking-table-wrap {
+                margin-top: 10px;
+                border-radius: 10px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .booking-table-wrap table {
+                min-width: 700px;
+            }
+            th, td {
+                padding: 12px 10px;
+                font-size: 13px;
+            }
+
+            /* Expense Summary Cards */
+            .expense-summary {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .expense-card {
+                padding: 14px;
+            }
+            .expense-card .amount {
+                font-size: 20px;
+            }
+
+            /* User Profiles Grid */
+            .user-profiles-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+            .account-box {
+                padding: 24px 16px;
+            }
+
+            /* AI Assistant Section */
+            .ai-kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .ai-kpi-card {
+                padding: 14px;
+            }
+            .ai-kpi-value {
+                font-size: 22px;
+            }
+            .ai-preset-chip {
+                min-height: 44px;
+                padding: 10px 14px;
+                display: inline-flex;
+                align-items: center;
+            }
+            .ai-result-box {
+                padding: 20px 16px;
+            }
+
+            /* Modals */
+            .modal {
+                padding: 12px;
+            }
+            .modal-content {
+                padding: 22px 16px;
+                max-height: 90vh;
+                border-radius: 12px;
+                width: 100%;
+            }
+            .modal-close {
+                width: 44px;
+                height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                top: 8px;
+                right: 10px;
+                font-size: 26px;
+            }
+
+            /* Repo Bar */
+            .repo-bar {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+                padding: 10px 14px;
+            }
+            .repo-bar .repo-title {
+                justify-content: center;
+            }
+            .repo-links {
+                justify-content: center;
+                gap: 8px;
+            }
+            .repo-link {
+                min-height: 38px;
+                padding: 6px 12px;
+            }
+        }
+
+        /* --------------------------------------------------------------------------
+           SMALL MOBILE BREAKPOINT: <= 480px
+           -------------------------------------------------------------------------- */
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 23px;
+            }
+            header p {
+                font-size: 13px;
+            }
+            .page {
+                padding: 20px 12px;
+            }
+
+            /* Single-column card grid on small screens for comfortable viewing */
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .travel-card-details {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .travel-card-details .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            /* Feature cards */
+            .feature-grid-quick {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            /* AI KPIs single column on very narrow screens */
+            .ai-kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .expense-summary {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            /* Modal footer action button */
+            .modal-footer-bar {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .modal-footer-bar .btn {
+                width: 100%;
+            }
+
+            /* Filter container */
+            .filter-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-search {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -1080,6 +1480,7 @@
         </div>
     </div>
 
+    <div class="mobile-table-hint">👉 Swipe table horizontally to see all columns & actions</div>
     <div class="booking-table-wrap">
         <table>
             <thead>
@@ -1257,12 +1658,12 @@
             </button>
         </div>
 
-        <div class="form-row" style="margin-top: 15px;">
-            <div style="flex: 2;">
+        <div class="ai-prompt-grid" style="margin-top: 15px;">
+            <div>
                 <label for="ai-custom-query"><strong>Custom Analysis Prompt</strong></label>
                 <textarea id="ai-custom-query" rows="3" placeholder="E.g., Which destination yields the highest average booking value? How can we reduce cancellations?"></textarea>
             </div>
-            <div style="flex: 1;">
+            <div>
                 <label for="ai-focus-area"><strong>Target Area</strong></label>
                 <select id="ai-focus-area" style="margin-bottom: 14px;">
                     <option value="Overview">Comprehensive Executive Audit</option>
@@ -1434,7 +1835,7 @@
             <label>Special Requests / Preferences</label>
             <textarea id="b-notes" rows="2" placeholder="e.g. Vegetarian meals, high floor room, airport pickup..."></textarea>
 
-            <div style="background: #f0f7fc; padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <div class="modal-footer-bar">
                 <div>
                     <span style="font-size: 13px; color: #57606f;">Estimated Cost:</span>
                     <div id="modal-total-display" style="font-size: 22px; font-weight: bold; color: #0984e3;">₹0</div>
@@ -1642,6 +2043,9 @@
         const navBtn = document.getElementById('nav-' + pageName);
         if (navBtn) {
             navBtn.classList.add('active-nav');
+            try {
+                navBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            } catch (e) {}
         }
 
         if (pageName === 'ai-assistant') {
